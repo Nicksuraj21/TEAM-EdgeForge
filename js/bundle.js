@@ -524,38 +524,38 @@ class LifeLensVRApp {
 
   updateInVRHUD() {
     // 1. Location buttons
-    const campusBtn = document.getElementById('in-vr-btn-campus');
-    const hospBtn = document.getElementById('in-vr-btn-hospital');
+    const campusBtn = document.getElementById('btn-env-campus');
+    const hospBtn = document.getElementById('btn-env-hospital');
     if (campusBtn) campusBtn.classList.toggle('active', this.currentEnvironment === 'campus');
     if (hospBtn) hospBtn.classList.toggle('active', this.currentEnvironment === 'hospital');
 
     // 2. Crawl button
-    const crawlBtn = document.getElementById('in-vr-btn-crawl');
+    const crawlBtn = document.getElementById('btn-crawl-toggle');
     if (crawlBtn) {
       crawlBtn.classList.toggle('crawling-active', this.isFloorCrawling);
-      crawlBtn.innerHTML = this.isFloorCrawling ? `<span>♿</span> Remount Wheelchair` : `<span>🧗</span> Floor Crawl Struggle`;
+      crawlBtn.innerHTML = this.isFloorCrawling ? `<span>♿</span> Remount Wheelchair` : `<span>🧗</span> Floor Crawl`;
     }
 
     // 3. Reality switch button
-    const realityBtn = document.getElementById('in-vr-btn-reality');
+    const realityBtn = document.getElementById('reality-switch-trigger');
     if (realityBtn) {
       realityBtn.classList.toggle('accessible-active', this.isAccessibleVR);
       realityBtn.innerHTML = this.isAccessibleVR ? `<span>♿</span> Solution Fixed` : `<span>⚠️</span> Barrier Fix`;
     }
 
     // 4. Cam angle buttons
-    const cam3rd = document.getElementById('in-vr-cam-3rd');
-    const cam1st = document.getElementById('in-vr-cam-1st');
-    const camDrone = document.getElementById('in-vr-cam-drone');
+    const cam3rd = document.getElementById('btn-cam-3rd');
+    const cam1st = document.getElementById('btn-cam-1st');
+    const camDrone = document.getElementById('btn-cam-drone');
     if (cam3rd) cam3rd.classList.toggle('active', this.cameraViewMode === 'third_person');
     if (cam1st) cam1st.classList.toggle('active', this.cameraViewMode === 'first_person');
     if (camDrone) camDrone.classList.toggle('active', this.cameraViewMode === 'drone');
 
     // 5. VR Box mode button
-    const vrboxBtn = document.getElementById('in-vr-btn-vrbox');
+    const vrboxBtn = document.getElementById('btn-vr-box-toggle');
     if (vrboxBtn) {
       vrboxBtn.classList.toggle('active', this.isVRBoxStereoMode);
-      vrboxBtn.innerHTML = this.isVRBoxStereoMode ? `<span>✕</span> Exit VR Box` : `<span>🥽</span> VR Box Mode`;
+      vrboxBtn.innerHTML = this.isVRBoxStereoMode ? `<span>✕</span> Exit VR Box` : `<span>🥽</span> VR Box`;
     }
 
     // 6. Live HUD Status text

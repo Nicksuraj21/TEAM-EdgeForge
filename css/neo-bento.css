@@ -390,109 +390,128 @@ body.neo-bento-body {
 }
 
 /* ==========================================================================
-   5. IN-VR CYBER ACTION DOCK & FLOATING CONTROLS
+   5. COMPACT TOP MENU BUTTON BAR (Clean Small Pill Buttons Above 3D Viewport)
    ========================================================================== */
-
-/* Top In-VR Floating Action Ribbon (Visible Inside 3D Viewport in All Modes) */
-.in-vr-action-dock {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  right: 70px;
+.vr-compact-menu-toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
-  z-index: 35;
-  pointer-events: auto;
-}
-
-.in-vr-dock-pill-btn {
-  background: rgba(15, 23, 42, 0.82);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  color: #ffffff !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
   padding: 8px 14px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+}
+
+.vr-menu-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.vr-menu-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 2px;
+}
+
+.compact-pill-btn {
+  background: #ffffff;
+  color: #090e1a !important;
+  border: 1.2px solid #cbd5e1;
+  padding: 5px 12px;
   border-radius: var(--radius-pill);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 30px;
   user-select: none;
 }
 
-.in-vr-dock-pill-btn:hover {
-  background: rgba(30, 41, 59, 0.95);
-  border-color: #38bdf8;
-  color: #38bdf8 !important;
-  transform: translateY(-2px) scale(1.03);
+.compact-pill-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
 }
 
-.in-vr-dock-pill-btn.active {
+.compact-pill-btn.active {
   background: var(--magenta-gradient);
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow: var(--magenta-shadow);
   color: #ffffff !important;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(217, 70, 239, 0.35);
 }
 
-.in-vr-dock-pill-btn.crawl-btn {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
-  border-color: rgba(239, 68, 68, 0.6);
+.compact-pill-btn.env-btn.active {
+  background: #0284c7;
+  color: #ffffff !important;
+  border-color: #0284c7;
 }
 
-.in-vr-dock-pill-btn.crawl-btn.crawling-active {
-  background: linear-gradient(135deg, #dc2626, #7f1d1d);
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.9);
-  animation: in-vr-pulse 1.2s infinite alternate;
+.compact-pill-btn.crawl-btn {
+  background: #fff1f2;
+  color: #b91c1c !important;
+  border-color: #fecdd3;
 }
 
-.in-vr-dock-pill-btn.fix-btn.accessible-active {
+.compact-pill-btn.crawl-btn.crawling-active {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: #ffffff !important;
+  border-color: #dc2626;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  animation: compact-pulse 1.4s infinite alternate;
+}
+
+.compact-pill-btn.fix-btn.accessible-active {
   background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff !important;
   border-color: #10b981;
 }
 
-.in-vr-dock-pill-btn.env-btn.active {
-  background: #0284c7;
-  border-color: #38bdf8;
+@keyframes compact-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
 }
 
-@keyframes in-vr-pulse {
-  from { box-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
-  to { box-shadow: 0 0 24px rgba(220, 38, 38, 0.95); }
-}
-
-/* Bottom-Left In-VR Live HUD Telemetry Badge */
+/* In-VR Live HUD Telemetry Badge (Bottom-Left Inside Viewport) */
 .in-vr-status-badge {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(15, 23, 42, 0.82);
+  bottom: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(14px);
-  padding: 8px 14px;
+  padding: 6px 12px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #e2e8f0;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   z-index: 25;
   pointer-events: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .in-vr-status-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  box-shadow: 0 0 6px #10b981;
   animation: dot-blink 1.5s infinite;
 }
 
@@ -504,16 +523,16 @@ body.neo-bento-body {
 /* Floating In-Viewport Corner Fullscreen Toggle Button */
 .vr-floating-fs-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(12px);
   color: #ffffff;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  font-size: 1.25rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
