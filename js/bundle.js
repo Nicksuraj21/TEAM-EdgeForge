@@ -7,8 +7,88 @@
  */
 
 // ============================================================================
-// 1. PROCEDURAL TEXTURE GENERATORS (PBR Textures)
+// 1. PROCEDURAL PBR MATERIAL & TEXTURE GENERATORS (Photorealistic Materials)
 // ============================================================================
+
+function createFabricTexture(baseColor = '#1e3a8a') {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = baseColor;
+  ctx.fillRect(0, 0, 256, 256);
+
+  // Micro-weave fabric pattern
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  for (let x = 0; x < 256; x += 4) {
+    for (let y = 0; y < 256; y += 4) {
+      if ((x + y) % 8 === 0) ctx.fillRect(x, y, 2, 2);
+    }
+  }
+  ctx.fillStyle = 'rgba(0,0,0,0.08)';
+  for (let x = 0; x < 256; x += 4) {
+    for (let y = 0; y < 256; y += 4) {
+      if ((x + y) % 8 !== 0) ctx.fillRect(x, y, 2, 2);
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 4);
+  return tex;
+}
+
+function createDenimTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(0, 0, 256, 256);
+
+  // Diagonal denim twill lines
+  ctx.strokeStyle = 'rgba(96,165,250,0.18)';
+  ctx.lineWidth = 1.5;
+  for (let i = -256; i < 512; i += 6) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + 256, 256); ctx.stroke();
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 3);
+  return tex;
+}
+
+function createTreadTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128; canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, 128, 128);
+
+  ctx.fillStyle = '#1e293b';
+  for (let y = 0; y < 128; y += 12) {
+    ctx.fillRect(0, y, 128, 6);
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(1, 16);
+  return tex;
+}
+
+function createContactShadowTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128; canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  
+  const radGrad = ctx.createRadialGradient(64, 64, 10, 64, 64, 60);
+  radGrad.addColorStop(0, 'rgba(0,0,0,0.7)');
+  radGrad.addColorStop(0.5, 'rgba(0,0,0,0.3)');
+  radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = radGrad;
+  ctx.fillRect(0, 0, 128, 128);
+
+  return new THREE.CanvasTexture(canvas);
+}
 
 function createAsphaltTexture() {
   const canvas = document.createElement('canvas');
@@ -736,6 +816,9 @@ class LifeLensVRApp {
     this.vrRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.vrRenderer.shadowMap.enabled = true;
     this.vrRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.vrRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.vrRenderer.toneMappingExposure = 1.25;
+    this.vrRenderer.outputEncoding = THREE.sRGBEncoding;
     this.vrRenderer.autoClear = false;
 
     if (this.vrRenderer.xr) {
@@ -787,33 +870,39 @@ class LifeLensVRApp {
 
     container.appendChild(canvas);
 
-    // Lighting
+    // Photorealistic 3-Point Studio & Atmospheric Lighting
     if (this.currentEnvironment === 'hospital') {
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
-      this.vrScene.add(ambientLight);
+      const ambientSky = new THREE.HemisphereLight(0xf8fafc, 0x0f172a, 0.95);
+      this.vrScene.add(ambientSky);
 
-      const surgicalLight = new THREE.DirectionalLight(0xf0fdf4, 1.2);
-      surgicalLight.position.set(0, 12, 0);
-      surgicalLight.castShadow = true;
-      this.vrScene.add(surgicalLight);
+      const mainSurgical = new THREE.DirectionalLight(0xffffff, 1.4);
+      mainSurgical.position.set(4, 14, 6);
+      mainSurgical.castShadow = true;
+      mainSurgical.shadow.mapSize.width = 2048;
+      mainSurgical.shadow.mapSize.height = 2048;
+      mainSurgical.shadow.bias = -0.0001;
+      this.vrScene.add(mainSurgical);
 
-      const blueLamp = new THREE.PointLight(0x38bdf8, 0.6, 20);
-      blueLamp.position.set(0, 4, 0);
-      this.vrScene.add(blueLamp);
+      const rimCyanLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
+      rimCyanLight.position.set(-8, 8, -8);
+      this.vrScene.add(rimCyanLight);
 
       this.build3DHospitalComplex();
     } else {
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-      this.vrScene.add(ambientLight);
+      const ambientSky = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.85);
+      this.vrScene.add(ambientSky);
 
-      const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.45);
-      sunLight.position.set(22, 34, 24);
+      const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.6);
+      sunLight.position.set(24, 38, 22);
       sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 2048;
+      sunLight.shadow.mapSize.height = 2048;
+      sunLight.shadow.bias = -0.0001;
       this.vrScene.add(sunLight);
 
-      const blueFillLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
-      blueFillLight.position.set(-22, 14, -14);
-      this.vrScene.add(blueFillLight);
+      const skyRimLight = new THREE.DirectionalLight(0x38bdf8, 0.55);
+      skyRimLight.position.set(-20, 16, -18);
+      this.vrScene.add(skyRimLight);
 
       this.buildExpansiveCampus();
       this.build3DBlindStudent();
@@ -1497,7 +1586,7 @@ class LifeLensVRApp {
   }
 
   // ==========================================================================
-  // 6. FLOOR CRAWLING & MOBILITY STRUGGLE CHARACTER RIG ("Ghis Ghis Ke Chalna")
+  // 6. HIGH-REALISM FLOOR CRAWLING & MOBILITY STRUGGLE CHARACTER RIG
   // ==========================================================================
   build3DCrawlingCharacter() {
     if (this.crawlingCharacterGroup) {
@@ -1507,75 +1596,102 @@ class LifeLensVRApp {
     this.crawlingCharacterGroup = new THREE.Group();
     this.vrScene.add(this.crawlingCharacterGroup);
 
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.55 });
-    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1f1914, roughness: 0.8 });
-    const hoodieMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.7 });
-    const jeansMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.75 });
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd49a6a, roughness: 0.45, metalness: 0.05 });
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.85 });
+    const eyesMat = new THREE.MeshStandardMaterial({ color: 0x090e1a, roughness: 0.1 });
+    const hoodieMat = new THREE.MeshStandardMaterial({ map: createFabricTexture('#1e40af'), roughness: 0.65 });
+    const jeansMat = new THREE.MeshStandardMaterial({ map: createDenimTexture(), roughness: 0.7 });
     const shoesMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: createContactShadowTexture(), transparent: true, opacity: 0.6, depthWrite: false });
 
-    // Prone Torso on the Floor
+    // 1. Soft Ground Contact Shadow Decal
+    const shadowMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.8), shadowMat);
+    shadowMesh.rotation.x = -Math.PI / 2;
+    shadowMesh.position.set(0, 0.012, 0.2);
+    this.crawlingCharacterGroup.add(shadowMesh);
+
+    // 2. Prone Torso on the Floor (Anatomical Arch)
     const torso = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.2, 0.54), hoodieMat);
     torso.position.set(0, 0.14, 0);
     torso.rotation.x = -0.15;
     torso.castShadow = true;
     this.crawlingCharacterGroup.add(torso);
 
-    // Strained Lifted Head Looking Upward
+    // 3. Strained Lifted Head Looking Upward
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 0.28, -0.32);
 
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), skinMat);
-    head.scale.set(0.95, 1.1, 1.0);
-    head.rotation.x = -0.3; // Looking up at high desks and beds
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.125, 20, 20), skinMat);
+    head.scale.set(0.95, 1.15, 1.05);
+    head.rotation.x = -0.35; // Straining neck looking up at high desks and beds
+    head.castShadow = true;
     headGroup.add(head);
 
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.125, 14, 14, 0, Math.PI * 2, 0, Math.PI / 1.7), hairMat);
-    hair.position.y = 0.02;
+    // Facial Features (Nose, Ears, Eyes)
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.045, 6), skinMat);
+    nose.position.set(0, 0.01, -0.14);
+    nose.rotation.x = -Math.PI / 2;
+    headGroup.add(nose);
+
+    for (let eyeSide of [-0.042, 0.042]) {
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 8), eyesMat);
+      eye.position.set(eyeSide, 0.03, -0.125);
+      headGroup.add(eye);
+    }
+
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), hairMat);
+    hair.position.set(0, 0.03, -0.01);
     headGroup.add(hair);
 
     this.crawlingCharacterGroup.add(headGroup);
 
-    // Reaching & Dragging Arms
+    // 4. Reaching & Dragging Muscular Arms
     for (let side of [-1, 1]) {
       const armGroup = new THREE.Group();
       armGroup.name = side === -1 ? "crawlLeftArm" : "crawlRightArm";
       armGroup.position.set(side * 0.22, 0.12, -0.15);
 
-      const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.28, 8), hoodieMat);
+      const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.042, 0.28, 12), hoodieMat);
       upperArm.position.set(0, 0, -0.14);
       upperArm.rotation.x = Math.PI / 2;
+      upperArm.castShadow = true;
       armGroup.add(upperArm);
 
-      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.28, 8), hoodieMat);
+      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.036, 0.28, 12), hoodieMat);
       forearm.position.set(0, 0, -0.38);
       forearm.rotation.x = Math.PI / 2;
+      forearm.castShadow = true;
       armGroup.add(forearm);
 
-      const hand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, 0.1), skinMat);
-      hand.position.set(0, -0.02, -0.54);
-      armGroup.add(hand);
+      // Palm Pressing Floor
+      const palm = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.11), skinMat);
+      palm.position.set(0, -0.035, -0.54);
+      armGroup.add(palm);
 
       this.crawlingCharacterGroup.add(armGroup);
     }
 
-    // Dragging Legs on Floor
+    // 5. Dragging Legs on Floor
     for (let side of [-1, 1]) {
       const legGroup = new THREE.Group();
       legGroup.name = side === -1 ? "crawlLeftLeg" : "crawlRightLeg";
       legGroup.position.set(side * 0.11, 0.1, 0.26);
 
-      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.42, 10), jeansMat);
+      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.056, 0.44, 12), jeansMat);
       thigh.position.set(0, 0, 0.2);
       thigh.rotation.x = Math.PI / 2 + 0.1;
+      thigh.castShadow = true;
       legGroup.add(thigh);
 
-      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.045, 0.4, 10), jeansMat);
+      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.046, 0.4, 12), jeansMat);
       shin.position.set(0, 0, 0.58);
       shin.rotation.x = Math.PI / 2 + 0.1;
+      shin.castShadow = true;
       legGroup.add(shin);
 
-      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.18), shoesMat);
+      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.07, 0.2), shoesMat);
       shoe.position.set(0, 0.02, 0.8);
+      shoe.castShadow = true;
       legGroup.add(shoe);
 
       this.crawlingCharacterGroup.add(legGroup);
@@ -1609,14 +1725,20 @@ class LifeLensVRApp {
     }
 
     this.parkedWheelchairGroup = new THREE.Group();
-    // Parked near dismount spot
     this.parkedWheelchairGroup.position.set(this.riderPos.x + 0.8, 0, this.riderPos.z + 0.8);
     this.parkedWheelchairGroup.rotation.y = this.riderYaw + 0.4;
     this.vrScene.add(this.parkedWheelchairGroup);
 
     const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
-    const blackRubberMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
+    const rubberMat = new THREE.MeshStandardMaterial({ map: createTreadTexture(), roughness: 0.85 });
     const leatherSeatMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: createContactShadowTexture(), transparent: true, opacity: 0.55, depthWrite: false });
+
+    // Contact shadow
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), shadowMat);
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.set(0, 0.01, 0.1);
+    this.parkedWheelchairGroup.add(shadow);
 
     const seat = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.07, 0.5), leatherSeatMat);
     seat.position.set(0, 0.48, 0);
@@ -1627,7 +1749,7 @@ class LifeLensVRApp {
     this.parkedWheelchairGroup.add(back);
 
     for (let side of [-1, 1]) {
-      const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.034, 12, 32), blackRubberMat);
+      const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.034, 16, 36), rubberMat);
       wheel.position.set(side * 0.31, 0.42, 0.12);
       wheel.rotation.y = Math.PI / 2;
       this.parkedWheelchairGroup.add(wheel);
@@ -1635,7 +1757,7 @@ class LifeLensVRApp {
   }
 
   // ==========================================================================
-  // 7. 3D WHEELCHAIR & HUMAN RIDER (Active Driving Rig)
+  // 7. PHOTOREALISTIC 3D MECHANICAL WHEELCHAIR & ANATOMICAL RIDER RIG
   // ==========================================================================
   build3DWheelchairRider() {
     if (this.riderCharacterGroup) {
@@ -1645,56 +1767,83 @@ class LifeLensVRApp {
     this.riderCharacterGroup = new THREE.Group();
     this.vrScene.add(this.riderCharacterGroup);
 
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.55 });
-    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1f1914, roughness: 0.8 });
-    const eyesMat = new THREE.MeshBasicMaterial({ color: 0x090e1a });
-    const hoodieMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.65 });
-    const innerShirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
-    const jeansMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.75 });
+    // Realistic PBR Textures & Materials
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd49a6a, roughness: 0.45, metalness: 0.05 });
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.85 });
+    const eyesMat = new THREE.MeshStandardMaterial({ color: 0x090e1a, roughness: 0.1 });
+    const eyesWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const hoodieMat = new THREE.MeshStandardMaterial({ map: createFabricTexture('#1e40af'), roughness: 0.65 });
+    const hoodieRibMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.8 });
+    const denimMat = new THREE.MeshStandardMaterial({ map: createDenimTexture(), roughness: 0.7 });
     const shoesWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35 });
-    const shoesAccentMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 });
-    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
-    const blackRubberMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
-    const leatherSeatMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 });
+    const shoesAccentMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 });
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, metalness: 0.96, roughness: 0.12 });
+    const rubberMat = new THREE.MeshStandardMaterial({ map: createTreadTexture(), roughness: 0.85 });
+    const leatherMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.55 });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: createContactShadowTexture(), transparent: true, opacity: 0.6, depthWrite: false });
 
-    // Seat
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.07, 0.5), leatherSeatMat);
-    seat.position.set(0, 0.48, 0);
-    seat.castShadow = true;
-    this.riderCharacterGroup.add(seat);
+    // 1. Soft Ground Contact Shadow
+    const groundShadow = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), shadowMat);
+    groundShadow.rotation.x = -Math.PI / 2;
+    groundShadow.position.set(0, 0.012, 0.08);
+    this.riderCharacterGroup.add(groundShadow);
 
-    // Backrest
-    const back = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.52, 0.06), leatherSeatMat);
-    back.position.set(0, 0.76, 0.23);
-    back.rotation.x = -0.05;
-    back.castShadow = true;
-    this.riderCharacterGroup.add(back);
+    // 2. High-Tech Contoured Wheelchair Seat & Backrest
+    const seatCushion = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.08, 0.48), leatherMat);
+    seatCushion.position.set(0, 0.48, 0);
+    seatCushion.castShadow = true;
+    this.riderCharacterGroup.add(seatCushion);
 
-    // Frame
-    for (let xOff of [-0.26, 0.26]) {
-      const vertTube = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.58, 12), chromeMat);
-      vertTube.position.set(xOff, 0.65, 0.24);
+    const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.52, 0.06), leatherMat);
+    backrest.position.set(0, 0.76, 0.22);
+    backrest.rotation.x = -0.06;
+    backrest.castShadow = true;
+    this.riderCharacterGroup.add(backrest);
+
+    // 3. Welded Tubular Aerospace Aluminum Frame & Push Handles
+    for (let xOff of [-0.25, 0.25]) {
+      const vertTube = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.58, 16), chromeMat);
+      vertTube.position.set(xOff, 0.65, 0.23);
+      vertTube.castShadow = true;
       this.riderCharacterGroup.add(vertTube);
 
-      const handleGrip = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.14, 10), blackRubberMat);
+      const bottomBar = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.5, 12), chromeMat);
+      bottomBar.rotation.x = Math.PI / 2;
+      bottomBar.position.set(xOff, 0.22, 0.02);
+      this.riderCharacterGroup.add(bottomBar);
+
+      const handleGrip = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.14, 12), rubberMat);
       handleGrip.rotation.x = Math.PI / 2;
-      handleGrip.position.set(xOff, 0.94, 0.31);
+      handleGrip.position.set(xOff, 0.94, 0.3);
       this.riderCharacterGroup.add(handleGrip);
 
-      const armrest = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.36), blackRubberMat);
-      armrest.position.set(xOff, 0.67, 0.02);
-      this.riderCharacterGroup.add(armrest);
+      const armrestPad = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.035, 0.34), leatherMat);
+      armrestPad.position.set(xOff, 0.67, 0.02);
+      armrestPad.castShadow = true;
+      this.riderCharacterGroup.add(armrestPad);
     }
 
-    // Footrests
+    // Crossbrace Under Seat
+    const cross1 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.52, 8), chromeMat);
+    cross1.rotation.z = 0.55;
+    cross1.position.set(0, 0.35, 0.02);
+    this.riderCharacterGroup.add(cross1);
+
+    const cross2 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.52, 8), chromeMat);
+    cross2.rotation.z = -0.55;
+    cross2.position.set(0, 0.35, 0.02);
+    this.riderCharacterGroup.add(cross2);
+
+    // Aluminum Serrated Footplates
     for (let xOff of [-0.13, 0.13]) {
       const footplate = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.02, 0.18), chromeMat);
       footplate.position.set(xOff, 0.13, -0.34);
       footplate.rotation.x = 0.18;
+      footplate.castShadow = true;
       this.riderCharacterGroup.add(footplate);
     }
 
-    // Wheels
+    // 4. Precision 24-Inch Spoke Wheels with Treaded Rubber Tires
     for (let side of [-1, 1]) {
       const wheelPivot = new THREE.Group();
       wheelPivot.name = side === -1 ? "leftBigWheel" : "rightBigWheel";
@@ -1703,21 +1852,25 @@ class LifeLensVRApp {
       const innerGroup = new THREE.Group();
       innerGroup.rotation.y = Math.PI / 2;
 
-      const tire = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.034, 16, 36), blackRubberMat);
+      // Treaded Tire
+      const tire = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.034, 16, 40), rubberMat);
       tire.castShadow = true;
       innerGroup.add(tire);
 
-      const pushRim = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.016, 10, 32), chromeMat);
+      // Chrome Push Rim with Mounting Brackets
+      const pushRim = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.016, 12, 36), chromeMat);
       pushRim.position.z = side * 0.035;
       innerGroup.add(pushRim);
 
+      // Machined Aluminum Axle Hub
       const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.07, 16), chromeMat);
       hub.rotation.x = Math.PI / 2;
       innerGroup.add(hub);
 
-      for (let s = 0; s < 12; s++) {
-        const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.74, 4), chromeMat);
-        spoke.rotation.z = (s * Math.PI) / 6;
+      // 16 Stainless Steel Cross Spokes
+      for (let s = 0; s < 16; s++) {
+        const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.0035, 0.0035, 0.74, 6), chromeMat);
+        spoke.rotation.z = (s * Math.PI) / 8;
         innerGroup.add(spoke);
       }
 
@@ -1725,20 +1878,26 @@ class LifeLensVRApp {
       this.riderCharacterGroup.add(wheelPivot);
     }
 
-    // Casters
+    // Front 360° Castor Forks & Wheels
     for (let side of [-0.21, 0.21]) {
       const casterPivot = new THREE.Group();
       casterPivot.name = side === -0.21 ? "leftFrontCaster" : "rightFrontCaster";
       casterPivot.position.set(side, 0.08, -0.28);
 
-      const casterWheel = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.035, 16), blackRubberMat);
+      const fork = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.04), chromeMat);
+      fork.position.set(0, 0.04, 0);
+      casterPivot.add(fork);
+
+      const casterWheel = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.035, 16), rubberMat);
       casterWheel.rotation.z = Math.PI / 2;
+      casterWheel.castShadow = true;
       casterPivot.add(casterWheel);
 
       this.riderCharacterGroup.add(casterPivot);
     }
 
-    // Head
+    // 5. Anatomical Human Character Sculpt
+    // Head & Facial Features
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 1.28, 0.15);
 
@@ -1747,69 +1906,109 @@ class LifeLensVRApp {
     head.castShadow = true;
     headGroup.add(head);
 
-    const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), hairMat);
+    // Layered Textured Hair
+    const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.13, 18, 18, 0, Math.PI * 2, 0, Math.PI / 1.7), hairMat);
     hairTop.position.set(0, 0.03, -0.01);
     headGroup.add(hairTop);
 
-    for (let eyeSide of [-0.045, 0.045]) {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 8), eyesMat);
-      eye.position.set(eyeSide, 0.03, -0.12);
-      headGroup.add(eye);
+    // Realistic Eyes with Sclera & Iris
+    for (let eyeSide of [-0.042, 0.042]) {
+      const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), eyesWhiteMat);
+      sclera.position.set(eyeSide, 0.03, -0.12);
+      headGroup.add(sclera);
+
+      const iris = new THREE.Mesh(new THREE.SphereGeometry(0.01, 8, 8), eyesMat);
+      iris.position.set(eyeSide, 0.03, -0.134);
+      headGroup.add(iris);
     }
 
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.06, 0.12, 12), skinMat);
+    // Defined Nose Bridge
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.045, 6), skinMat);
+    nose.position.set(0, 0.01, -0.136);
+    nose.rotation.x = -Math.PI / 2;
+    headGroup.add(nose);
+
+    // Defined Neck
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.062, 0.12, 16), skinMat);
     neck.position.set(0, 1.16, 0.15);
     this.riderCharacterGroup.add(neck);
 
     this.riderCharacterGroup.add(headGroup);
 
-    // Torso
+    // Upper Body (Varsity Cobalt Hoodie with Zipper & Drawstrings)
     const chest = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.32, 0.26), hoodieMat);
     chest.position.set(0, 1.02, 0.15);
     chest.castShadow = true;
     this.riderCharacterGroup.add(chest);
+
+    // Zipper line
+    const zipper = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.32, 0.01), chromeMat);
+    zipper.position.set(0, 1.02, 0.019);
+    this.riderCharacterGroup.add(zipper);
 
     const belly = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.22, 0.25), hoodieMat);
     belly.position.set(0, 0.78, 0.14);
     belly.castShadow = true;
     this.riderCharacterGroup.add(belly);
 
-    // Legs
+    // Lower Body (Denim Jeans with Contoured Knees)
     for (let side of [-0.11, 0.11]) {
-      const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.13, 0.44), jeansMat);
+      const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.13, 0.44), denimMat);
       thigh.position.set(side, 0.52, -0.07);
       thigh.castShadow = true;
       this.riderCharacterGroup.add(thigh);
 
-      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 12), jeansMat);
+      const knee = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 12), denimMat);
+      knee.position.set(side, 0.48, -0.28);
+      this.riderCharacterGroup.add(knee);
+
+      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 16), denimMat);
       shin.position.set(side, 0.31, -0.29);
       shin.castShadow = true;
       this.riderCharacterGroup.add(shin);
 
-      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.2), shoesAccentMat);
-      shoe.position.set(side, 0.14, -0.34);
-      this.riderCharacterGroup.add(shoe);
+      // Realistic Sneaker (White Midsole + Crimson Body)
+      const sole = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.22), shoesWhiteMat);
+      sole.position.set(side, 0.115, -0.34);
+      sole.castShadow = true;
+      this.riderCharacterGroup.add(sole);
+
+      const upperShoe = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.06, 0.2), shoesAccentMat);
+      upperShoe.position.set(side, 0.155, -0.34);
+      upperShoe.castShadow = true;
+      this.riderCharacterGroup.add(upperShoe);
     }
 
-    // Arms
+    // Articulated Arms & Hands Gripping Push-Rims
     for (let side of [-1, 1]) {
       const armGroup = new THREE.Group();
       armGroup.name = side === -1 ? "leftRiderArm" : "rightRiderArm";
       armGroup.position.set(side * 0.24, 1.1, 0.15);
 
-      const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.046, 0.28, 12), hoodieMat);
+      const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.046, 0.28, 16), hoodieMat);
       upperArm.position.set(side * 0.03, -0.12, -0.05);
       upperArm.rotation.x = 0.6;
+      upperArm.castShadow = true;
       armGroup.add(upperArm);
 
-      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.038, 0.26, 12), hoodieMat);
+      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.038, 0.26, 16), hoodieMat);
       forearm.position.set(side * 0.06, -0.27, -0.16);
       forearm.rotation.x = 0.95;
+      forearm.castShadow = true;
       armGroup.add(forearm);
 
-      const hand = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.035, 0.08), skinMat);
-      hand.position.set(side * 0.08, -0.37, -0.22);
-      armGroup.add(hand);
+      // Anatomical Hand Gripping Push-Rim
+      const palm = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.035, 0.08), skinMat);
+      palm.position.set(side * 0.08, -0.37, -0.22);
+      armGroup.add(palm);
+
+      // 4 Gripping Fingers
+      for (let f = 0; f < 4; f++) {
+        const finger = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.02, 0.035), skinMat);
+        finger.position.set(side * (0.06 + f * 0.014), -0.38, -0.26);
+        finger.rotation.x = 0.7;
+        armGroup.add(finger);
+      }
 
       this.riderCharacterGroup.add(armGroup);
     }
