@@ -1,7 +1,7 @@
 /* ==========================================================================
    LifeLens VR - Dedicated Disability Empathy VR Design System
    "Experience Lived Disabilities in VR. Build Universal Inclusion."
-   Futuristic Cyber Goggles HUD, Spatial Audio Visualizer, 3D WebXR, Meta Quest VR Box, Hospital & Fullscreen Engine
+   Futuristic Cyber Goggles HUD, In-VR Interactive Action Dock, 3D WebXR, Meta Quest VR Box, Hospital & Fullscreen Engine
    ========================================================================== */
 
 :root {
@@ -390,151 +390,118 @@ body.neo-bento-body {
 }
 
 /* ==========================================================================
-   5. VR Control Buttons, Hospital & Fullscreen
+   5. IN-VR CYBER ACTION DOCK & FLOATING CONTROLS
    ========================================================================== */
-.cam-view-btn {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--text-dark);
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  padding: 7px 14px;
+
+/* Top In-VR Floating Action Ribbon (Visible Inside 3D Viewport in All Modes) */
+.in-vr-action-dock {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  z-index: 35;
+  pointer-events: auto;
+}
+
+.in-vr-dock-pill-btn {
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
   font-size: 0.82rem;
   font-weight: 800;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.cam-view-btn:hover {
-  background: #ffffff;
-  transform: translateY(-1px);
-}
-
-.cam-view-btn.active {
-  background: var(--text-dark);
-  color: #ffffff !important;
-  border-color: var(--text-dark);
-}
-
-/* Environment Switcher Buttons (Campus vs Hospital) */
-.vr-env-btn {
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--text-dark);
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  font-size: 0.86rem;
-  font-weight: 800;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   transition: all 0.2s ease;
+  user-select: none;
 }
 
-.vr-env-btn:hover {
-  background: #ffffff;
-  transform: translateY(-1px);
-}
-
-.vr-env-btn.active {
-  background: #0284c7;
-  color: #ffffff !important;
-  border-color: #0284c7;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
-}
-
-/* Floor Crawling / Severe Mobility Struggle Button */
-.vr-crawl-toggle-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-  color: #ffffff !important;
-  border: none;
-  padding: 10px 18px;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
-  transition: all 0.2s ease;
-}
-
-.vr-crawl-toggle-btn:hover {
+.in-vr-dock-pill-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: #38bdf8;
+  color: #38bdf8 !important;
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.6);
 }
 
-.vr-crawl-toggle-btn.crawling-active {
+.in-vr-dock-pill-btn.active {
+  background: var(--magenta-gradient);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--magenta-shadow);
+  color: #ffffff !important;
+}
+
+.in-vr-dock-pill-btn.crawl-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.in-vr-dock-pill-btn.crawl-btn.crawling-active {
   background: linear-gradient(135deg, #dc2626, #7f1d1d);
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
-  animation: crawl-pulse 1.2s infinite alternate;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.9);
+  animation: in-vr-pulse 1.2s infinite alternate;
 }
 
-@keyframes crawl-pulse {
-  from { box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
-  to { box-shadow: 0 0 28px rgba(220, 38, 38, 0.95); }
+.in-vr-dock-pill-btn.fix-btn.accessible-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
 }
 
-/* VR Box & Meta Quest Mode Button */
-.vr-meta-quest-btn {
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
-  color: #ffffff !important;
-  border: none;
-  padding: 10px 18px;
+.in-vr-dock-pill-btn.env-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+}
+
+@keyframes in-vr-pulse {
+  from { box-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
+  to { box-shadow: 0 0 24px rgba(220, 38, 38, 0.95); }
+}
+
+/* Bottom-Left In-VR Live HUD Telemetry Badge */
+.in-vr-status-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(14px);
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+  font-size: 0.8rem;
   font-weight: 800;
-  font-size: 0.9rem;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
-  transition: all 0.2s ease;
+  z-index: 25;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-.vr-meta-quest-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.6);
+.in-vr-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: dot-blink 1.5s infinite;
 }
 
-.vr-meta-quest-btn.active {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+@keyframes dot-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
-/* Fullscreen Button */
-.vr-fullscreen-btn {
-  background: #ffffff;
-  color: var(--text-dark) !important;
-  border: 1.5px solid rgba(0, 0, 0, 0.12);
-  padding: 10px 18px;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-}
-
-.vr-fullscreen-btn:hover {
-  background: #f8fafc;
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-.vr-fullscreen-btn.active {
-  background: var(--text-dark);
-  color: #ffffff !important;
-}
-
-/* Floating Corner Fullscreen Toggle Button */
+/* Floating In-Viewport Corner Fullscreen Toggle Button */
 .vr-floating-fs-btn {
   position: absolute;
   top: 16px;
@@ -551,7 +518,7 @@ body.neo-bento-body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 30;
+  z-index: 40;
   transition: all 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
@@ -581,20 +548,20 @@ body.neo-bento-body {
   display: block;
 }
 
-/* On-Screen Virtual Driving Controls (D-Pad & Auto-Demo Tour) */
+/* On-Screen Virtual Driving Controls (D-Pad) */
 .vr-virtual-dpad-container {
   position: absolute;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   z-index: 25;
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(16px);
-  padding: 12px 14px;
-  border-radius: 20px;
+  padding: 10px 12px;
+  border-radius: 18px;
   border: 1.5px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
@@ -603,10 +570,10 @@ body.neo-bento-body {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  font-size: 1.2rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  font-size: 1.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,68 +586,6 @@ body.neo-bento-body {
   background: var(--magenta-gradient);
   transform: scale(0.92);
   box-shadow: 0 0 14px rgba(217, 70, 239, 0.8);
-}
-
-.vr-auto-tour-btn {
-  background: var(--magenta-gradient);
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  box-shadow: var(--magenta-shadow);
-  transition: all 0.2s ease;
-}
-
-.vr-auto-tour-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(217, 70, 239, 0.6);
-}
-
-.vr-auto-tour-btn.running {
-  background: linear-gradient(135deg, #10b981, #059669);
-  animation: tour-pulse 1.2s infinite alternate;
-}
-
-/* Perspective Selector Bar */
-.empathy-mode-selector-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.empathy-pill-btn {
-  background: #ffffff;
-  color: var(--text-dark);
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  padding: 10px 18px;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 0.88rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.empathy-pill-btn:hover {
-  background: #f8fafc;
-  transform: translateY(-1px);
-}
-
-.empathy-pill-btn.active {
-  background: var(--text-dark);
-  color: #ffffff !important;
-  border-color: var(--text-dark);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Native Fullscreen CSS Handling */
@@ -709,5 +614,12 @@ body.neo-bento-body {
   }
   .neo-bento-master-wrapper {
     padding: 16px 16px 28px 16px;
+  }
+  .in-vr-action-dock {
+    gap: 5px;
+  }
+  .in-vr-dock-pill-btn {
+    padding: 6px 10px;
+    font-size: 0.76rem;
   }
 }

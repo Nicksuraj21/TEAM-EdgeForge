@@ -121,7 +121,7 @@
     <main id="main-content" role="main">
 
       <!-- ==========================================================================
-           VIEW 1: HOMEPAGE (Hero + Clean Direct VR Simulator Viewport)
+           VIEW 1: HOMEPAGE (Hero + Direct VR Simulator Viewport)
            ========================================================================== -->
       <div id="view-home" class="page-view">
         
@@ -194,88 +194,82 @@
         </div>
 
         <!-- ======================================================================
-             DIRECT 3D VR DISABILITY EXPERIENCE (Hospital + Floor Crawl + Fullscreen)
+             DIRECT 3D VR DISABILITY EXPERIENCE (In-VR Floating Action Dock)
              ====================================================================== -->
-        <div id="vr-simulator-section" class="neo-content-bento-card" style="margin-top: 24px;">
+        <div id="vr-simulator-section" class="neo-content-bento-card" style="margin-top: 24px; padding: 24px 20px;">
           
-          <!-- Top Row: Title & Action Controls -->
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
             <div>
               <span class="section-badge green">Live 3D WebXR Simulator</span>
-              <h2 style="font-size: 2.1rem; color: #090e1a; margin-top: 4px; margin-bottom: 0;">Disability Navigation & Trauma Ward Simulator</h2>
+              <h2 style="font-size: 1.8rem; color: #090e1a; margin-top: 4px; margin-bottom: 0;">Disability Navigation & Trauma Ward Simulator</h2>
             </div>
+            <div style="font-size: 0.84rem; font-weight: 700; color: #475569;">
+              ⌨️ Shortcuts: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">WASD</code> Move • <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">C</code> Crawl • <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">F</code> Fullscreen
+            </div>
+          </div>
 
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-              <!-- Floor Crawl / Mobility Struggle Mode Toggle -->
-              <button id="btn-crawl-toggle" class="vr-crawl-toggle-btn" onclick="window.lifeLensApp.toggleFloorCrawl();" aria-label="Toggle Floor Crawling Struggle">
-                <span>🧗</span> Dismount & Floor Crawl Struggle
+          <!-- 3D Canvas Viewport (With Floating In-VR Cyber Action Dock) -->
+          <div class="vr-viewer-wrapper" style="border-radius: 24px; position: relative; min-height: 600px; overflow: hidden; background: #0a0f1d;">
+            
+            <div id="empathy-shader-overlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; transition: all 0.3s ease;"></div>
+
+            <!-- ==================================================================
+                 FUTURISTIC IN-VR ACTION DOCK (All Features Accessible Inside 3D/VR)
+                 ================================================================== -->
+            <div class="in-vr-action-dock" role="toolbar" aria-label="In-VR Feature Controls">
+              
+              <!-- Location Switchers -->
+              <button id="in-vr-btn-campus" class="in-vr-dock-pill-btn env-btn active" onclick="window.lifeLensApp.switchEnvironment('campus')" title="Switch to Campus Plaza">
+                <span>🏛️</span> Campus
+              </button>
+              <button id="in-vr-btn-hospital" class="in-vr-dock-pill-btn env-btn" onclick="window.lifeLensApp.switchEnvironment('hospital')" title="Switch to Hospital Trauma Ward">
+                <span>🏥</span> Hospital Ward
+              </button>
+
+              <!-- Floor Crawl / Mobility Struggle Toggle -->
+              <button id="in-vr-btn-crawl" class="in-vr-dock-pill-btn crawl-btn" onclick="window.lifeLensApp.toggleFloorCrawl()" title="Toggle Floor Crawling Struggle (Key 'C')">
+                <span>🧗</span> Floor Crawl Struggle
+              </button>
+
+              <!-- Reality Switch Universal Retrofit Fix -->
+              <button id="in-vr-btn-reality" class="in-vr-dock-pill-btn fix-btn" onclick="window.lifeLensApp.toggleRealityMode()" title="Toggle Universal Architectural Retrofit">
+                <span>⚠️</span> Barrier Fix
+              </button>
+
+              <!-- Camera View Angle Switchers -->
+              <button id="in-vr-cam-3rd" class="in-vr-dock-pill-btn active" onclick="window.lifeLensApp.setCameraView('third_person', this)" title="3rd-Person Follow Camera">
+                <span>🎥</span> 3rd-Person
+              </button>
+              <button id="in-vr-cam-1st" class="in-vr-dock-pill-btn" onclick="window.lifeLensApp.setCameraView('first_person', this)" title="1st-Person Eye-Level Camera">
+                <span>🥽</span> 1st-Person Eye
+              </button>
+              <button id="in-vr-cam-drone" class="in-vr-dock-pill-btn" onclick="window.lifeLensApp.setCameraView('drone', this)" title="Overview Drone Camera">
+                <span>🚁</span> Drone
+              </button>
+
+              <!-- Auto-Drive Showcase Tour -->
+              <button id="in-vr-btn-tour" class="in-vr-dock-pill-btn" onclick="window.lifeLensApp.toggleAutoTour()" title="Auto-Drive Demonstration Tour">
+                <span>🚀</span> Auto Tour
+              </button>
+
+              <!-- VR Box Stereoscopic Headset Mode -->
+              <button id="in-vr-btn-vrbox" class="in-vr-dock-pill-btn" onclick="window.lifeLensApp.toggleVRBoxMode()" title="Dual-Lens VR Box & Meta Quest Headset Mode">
+                <span>🥽</span> VR Box Mode
               </button>
 
               <!-- Fullscreen Button -->
-              <button id="btn-fullscreen-toggle" class="vr-fullscreen-btn" onclick="window.lifeLensApp.toggleFullscreen();" aria-label="Toggle Fullscreen">
+              <button id="in-vr-btn-fullscreen" class="in-vr-dock-pill-btn" onclick="window.lifeLensApp.toggleFullscreen()" title="Toggle Fullscreen (Key 'F')">
                 <span>⛶</span> Fullscreen
               </button>
-
-              <!-- VR Box & Meta Quest Headset Mode Button -->
-              <button id="btn-vr-box-toggle" class="vr-meta-quest-btn" onclick="window.lifeLensApp.toggleVRBoxMode();">
-                <span>🥽</span> VR Box / Meta Quest Mode
-              </button>
-
-              <!-- Auto-Drive Showcase Tour Button -->
-              <button id="btn-auto-tour" class="vr-auto-tour-btn" onclick="window.lifeLensApp.toggleAutoTour();">
-                <span>🚀</span> Auto-Drive Showcase Tour
-              </button>
-
-              <!-- Reality Switch Button -->
-              <button id="reality-switch-trigger" class="reality-switch-btn" aria-label="Toggle Universal Solution Model">
-                <span>⚠️</span> Barriered State (Click to Fix)
-              </button>
-            </div>
-          </div>
-
-          <!-- Controls Bar: Environment Switcher, Empathy Perspectives & Camera Views -->
-          <div class="empathy-mode-selector-bar" style="margin-bottom: 16px;">
-            <!-- Environment Switcher -->
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <span style="font-size: 0.8rem; font-weight: 800; color: #475569; margin-right: 2px;">LOCATION:</span>
-              <button id="btn-env-campus" class="vr-env-btn active" onclick="window.lifeLensApp.switchEnvironment('campus')">
-                🏛️ Campus Plaza
-              </button>
-              <button id="btn-env-hospital" class="vr-env-btn" onclick="window.lifeLensApp.switchEnvironment('hospital')">
-                🏥 Hospital Trauma Ward
-              </button>
             </div>
 
-            <!-- Perspectives -->
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button class="empathy-pill-btn active" onclick="window.lifeLensApp.setEmpathyMode('wheelchair', this)">
-                <span>♿</span> Mobility / Physical
-              </button>
-              <button class="empathy-pill-btn" onclick="window.lifeLensApp.setEmpathyMode('low_vision', this)">
-                <span>🦯</span> Low Vision & Sensory
-              </button>
+            <!-- In-VR Live HUD Status Telemetry Badge (Bottom-Left) -->
+            <div id="in-vr-status-badge" class="in-vr-status-badge">
+              <div class="in-vr-status-dot"></div>
+              <span id="in-vr-status-text">🏛️ Campus Plaza • ♿ Wheelchair Mode Active</span>
             </div>
 
-            <!-- Camera Angles -->
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <span style="font-size: 0.8rem; font-weight: 800; color: #475569; margin-right: 4px;">CAMERA:</span>
-              <button class="cam-view-btn active" onclick="window.lifeLensApp.setCameraView('third_person', this)">
-                🎥 3rd-Person Follow
-              </button>
-              <button class="cam-view-btn" onclick="window.lifeLensApp.setCameraView('first_person', this)">
-                🥽 1st-Person Eye-Level
-              </button>
-              <button class="cam-view-btn" onclick="window.lifeLensApp.setCameraView('drone', this)">
-                🚁 Overview Drone
-              </button>
-            </div>
-          </div>
-
-          <!-- 3D Canvas Viewport (Clean, Uncluttered, Fullscreen Supported) -->
-          <div class="vr-viewer-wrapper" style="border-radius: 24px; position: relative; min-height: 580px; overflow: hidden; background: #0a0f1d;">
-            <div id="empathy-shader-overlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; transition: all 0.3s ease;"></div>
-
-            <!-- Floating Corner Fullscreen Toggle Button -->
+            <!-- Floating Corner Fullscreen Button -->
             <button class="vr-floating-fs-btn" onclick="window.lifeLensApp.toggleFullscreen();" title="Toggle Fullscreen (Key 'F')" aria-label="Toggle Fullscreen">
               ⛶
             </button>
@@ -284,7 +278,7 @@
             <div id="vr-stereo-divider" class="vr-stereoscopic-divider"></div>
 
             <!-- 3D WebGL Canvas -->
-            <div id="vr-canvas-container" style="min-height: 580px; width: 100%;"></div>
+            <div id="vr-canvas-container" style="min-height: 600px; width: 100%;"></div>
 
             <!-- Floating On-Screen Virtual D-Pad (Touch & Click Driving / Crawling) -->
             <div class="vr-virtual-dpad-container">
@@ -293,8 +287,8 @@
                       onmouseup="window.lifeLensApp.setVirtualKey('w', false)" 
                       ontouchstart="window.lifeLensApp.setVirtualKey('w', true); event.preventDefault();" 
                       ontouchend="window.lifeLensApp.setVirtualKey('w', false); event.preventDefault();"
-                      aria-label="Drive Forward">⬆️</button>
-              <div style="display: flex; gap: 6px;">
+                      aria-label="Drive / Crawl Forward">⬆️</button>
+              <div style="display: flex; gap: 5px;">
                 <button class="vr-dpad-btn" 
                         onmousedown="window.lifeLensApp.setVirtualKey('a', true)" 
                         onmouseup="window.lifeLensApp.setVirtualKey('a', false)" 
@@ -306,7 +300,7 @@
                         onmouseup="window.lifeLensApp.setVirtualKey('s', false)" 
                         ontouchstart="window.lifeLensApp.setVirtualKey('s', true); event.preventDefault();" 
                         ontouchend="window.lifeLensApp.setVirtualKey('s', false); event.preventDefault();"
-                        aria-label="Reverse">⬇️</button>
+                        aria-label="Reverse / Crawl Back">⬇️</button>
                 <button class="vr-dpad-btn" 
                         onmousedown="window.lifeLensApp.setVirtualKey('d', true)" 
                         onmouseup="window.lifeLensApp.setVirtualKey('d', false)" 

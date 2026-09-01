@@ -468,14 +468,57 @@ class LifeLensVRApp {
     }
   }
 
+  updateInVRHUD() {
+    // 1. Location buttons
+    const campusBtn = document.getElementById('in-vr-btn-campus');
+    const hospBtn = document.getElementById('in-vr-btn-hospital');
+    if (campusBtn) campusBtn.classList.toggle('active', this.currentEnvironment === 'campus');
+    if (hospBtn) hospBtn.classList.toggle('active', this.currentEnvironment === 'hospital');
+
+    // 2. Crawl button
+    const crawlBtn = document.getElementById('in-vr-btn-crawl');
+    if (crawlBtn) {
+      crawlBtn.classList.toggle('crawling-active', this.isFloorCrawling);
+      crawlBtn.innerHTML = this.isFloorCrawling ? `<span>♿</span> Remount Wheelchair` : `<span>🧗</span> Floor Crawl Struggle`;
+    }
+
+    // 3. Reality switch button
+    const realityBtn = document.getElementById('in-vr-btn-reality');
+    if (realityBtn) {
+      realityBtn.classList.toggle('accessible-active', this.isAccessibleVR);
+      realityBtn.innerHTML = this.isAccessibleVR ? `<span>♿</span> Solution Fixed` : `<span>⚠️</span> Barrier Fix`;
+    }
+
+    // 4. Cam angle buttons
+    const cam3rd = document.getElementById('in-vr-cam-3rd');
+    const cam1st = document.getElementById('in-vr-cam-1st');
+    const camDrone = document.getElementById('in-vr-cam-drone');
+    if (cam3rd) cam3rd.classList.toggle('active', this.cameraViewMode === 'third_person');
+    if (cam1st) cam1st.classList.toggle('active', this.cameraViewMode === 'first_person');
+    if (camDrone) camDrone.classList.toggle('active', this.cameraViewMode === 'drone');
+
+    // 5. VR Box mode button
+    const vrboxBtn = document.getElementById('in-vr-btn-vrbox');
+    if (vrboxBtn) {
+      vrboxBtn.classList.toggle('active', this.isVRBoxStereoMode);
+      vrboxBtn.innerHTML = this.isVRBoxStereoMode ? `<span>✕</span> Exit VR Box` : `<span>🥽</span> VR Box Mode`;
+    }
+
+    // 6. Live HUD Status text
+    const statusText = document.getElementById('in-vr-status-text');
+    if (statusText) {
+      const loc = this.currentEnvironment === 'hospital' ? '🏥 Hospital Trauma Ward' : '🏛️ Campus Plaza';
+      const mode = this.isFloorCrawling ? '🧗 Floor Crawl (0.28m)' : '♿ Wheelchair Mode';
+      const state = this.isAccessibleVR ? '✓ Universal Fixed' : '⚠️ Barriered State';
+      statusText.innerText = `${loc} • ${mode} • ${state}`;
+    }
+  }
+
   // ==========================================================================
   // ENVIRONMENT SWITCHER: Campus vs Hospital Trauma Center
   // ==========================================================================
   switchEnvironment(envName) {
     this.currentEnvironment = envName;
-    document.querySelectorAll('.vr-env-btn').forEach(b => b.classList.remove('active'));
-    const activeBtn = document.getElementById(`btn-env-${envName}`);
-    if (activeBtn) activeBtn.classList.add('active');
 
     // Reset character positions appropriately
     if (envName === 'hospital') {
@@ -486,6 +529,7 @@ class LifeLensVRApp {
     this.riderYaw = 0;
     this.riderSpeed = 0;
 
+    this.updateInVRHUD();
     this.initVREngine();
     this.audioSynth.playDiscoveryChime();
   }
@@ -495,40 +539,23 @@ class LifeLensVRApp {
   // ==========================================================================
   toggleFloorCrawl() {
     this.isFloorCrawling = !this.isFloorCrawling;
-    const btn = document.getElementById('btn-crawl-toggle');
 
     if (this.isFloorCrawling) {
-      if (btn) {
-        btn.classList.add('crawling-active');
-        btn.innerHTML = `<span>♿</span> Remount Wheelchair`;
-      }
       this.audioSynth.playFloorCrawlFriction();
-
-      // Show temporary struggle indicator in console/audio
-      console.log("🧗 Ground Crawling Empathy Active: Experiencing floor-level friction and high architectural barriers");
     } else {
-      if (btn) {
-        btn.classList.remove('crawling-active');
-        btn.innerHTML = `<span>🧗</span> Dismount & Floor Crawl Struggle`;
-      }
       this.audioSynth.playDiscoveryChime();
     }
 
+    this.updateInVRHUD();
     this.initVREngine();
   }
 
   toggleVRBoxMode() {
     this.isVRBoxStereoMode = !this.isVRBoxStereoMode;
-    const btn = document.getElementById('btn-vr-box-toggle');
     const divider = document.getElementById('vr-stereo-divider');
 
     if (this.isVRBoxStereoMode) {
-      if (btn) {
-        btn.classList.add('active');
-        btn.innerHTML = `<span>✕</span> Exit VR Box Mode`;
-      }
       if (divider) divider.classList.add('active');
-
       this.setCameraView('first_person');
       this.audioSynth.playDiscoveryChime();
 
@@ -548,10 +575,6 @@ class LifeLensVRApp {
       }
 
     } else {
-      if (btn) {
-        btn.classList.remove('active');
-        btn.innerHTML = `<span>🥽</span> VR Box / Meta Quest Mode`;
-      }
       if (divider) divider.classList.remove('active');
       this.setCameraView('third_person');
 
@@ -559,6 +582,8 @@ class LifeLensVRApp {
         try { document.exitFullscreen(); } catch (e) {}
       }
     }
+
+    this.updateInVRHUD();
   }
 
   toggleAutoTour() {
@@ -580,9 +605,9 @@ class LifeLensVRApp {
       this.toggleRealityMode();
     }
 
-    const btn = document.getElementById('btn-auto-tour');
+    const btn = document.getElementById('in-vr-btn-tour');
     if (btn) {
-      btn.classList.add('running');
+      btn.classList.add('active');
       btn.innerHTML = `<span>⏹️</span> Stop Tour`;
     }
 
@@ -591,17 +616,16 @@ class LifeLensVRApp {
 
   stopAutoTour() {
     this.isAutoTourRunning = false;
-    const btn = document.getElementById('btn-auto-tour');
+    const btn = document.getElementById('in-vr-btn-tour');
     if (btn) {
-      btn.classList.remove('running');
-      btn.innerHTML = `<span>🚀</span> Auto-Drive Showcase Tour`;
+      btn.classList.remove('active');
+      btn.innerHTML = `<span>🚀</span> Auto Tour`;
     }
   }
 
   setCameraView(viewMode, btnEl) {
     this.cameraViewMode = viewMode;
-    document.querySelectorAll('.cam-view-btn').forEach(b => b.classList.remove('active'));
-    if (btnEl) btnEl.classList.add('active');
+    this.updateInVRHUD();
   }
 
   setEmpathyMode(mode, btnEl) {
@@ -615,6 +639,7 @@ class LifeLensVRApp {
     } else if (mode === 'low_vision') {
       if (overlay) overlay.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:5; backdrop-filter: blur(5px) contrast(0.9); background: rgba(255,255,255,0.06);';
     }
+    this.updateInVRHUD();
   }
 
   initVREngine() {
