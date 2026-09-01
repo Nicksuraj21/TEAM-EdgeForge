@@ -88,11 +88,14 @@ function createHospitalTileTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 512; canvas.height = 512;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#f1f5f9';
+  
+  // High-gloss hospital marble/ceramic tile
+  ctx.fillStyle = '#f8fafc';
   ctx.fillRect(0, 0, 512, 512);
 
+  // Grout lines
   ctx.strokeStyle = '#cbd5e1';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.5;
   for (let x = 0; x <= 512; x += 128) {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
   }
@@ -100,12 +103,13 @@ function createHospitalTileTexture() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
   }
 
-  for (let i = 0; i < 4000; i++) {
-    const x = Math.random() * 512;
-    const y = Math.random() * 512;
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.fillRect(x, y, 4, 4);
-  }
+  // Soft reflective specular sheen
+  const grad = ctx.createLinearGradient(0, 0, 512, 512);
+  grad.addColorStop(0, 'rgba(255,255,255,0.4)');
+  grad.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+  grad.addColorStop(1, 'rgba(255,255,255,0.3)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 512, 512);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
@@ -117,45 +121,95 @@ function createHospitalWallTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 512; canvas.height = 512;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#f8fafc';
+  
+  // Upper clean clinical wall
+  ctx.fillStyle = '#f1f5f9';
   ctx.fillRect(0, 0, 512, 512);
 
-  // Mint-teal medical protective base trim
-  ctx.fillStyle = '#0d9488';
-  ctx.fillRect(0, 420, 512, 92);
+  // Mint-teal medical protective base trim (900mm crash barrier)
+  ctx.fillStyle = '#0f766e';
+  ctx.fillRect(0, 390, 512, 122);
 
   ctx.fillStyle = '#14b8a6';
-  ctx.fillRect(0, 414, 512, 6);
+  ctx.fillRect(0, 382, 512, 8);
+
+  // Stainless steel crash guard rail line
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 310, 512, 18);
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(0, 326, 512, 3);
+
+  // Signage details on wall
+  ctx.fillStyle = '#0284c7';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText('🏥 APEX EMERGENCY & TRAUMA COMPLEX', 24, 70);
+
+  ctx.fillStyle = '#dc2626';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('CRITICAL CARE UNIT (ICU-01)', 24, 96);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(4, 1);
+  tex.repeat.set(3, 1);
   return tex;
 }
 
 function createECGScreenTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 256; canvas.height = 128;
+  canvas.width = 512; canvas.height = 256;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#090d16';
-  ctx.fillRect(0, 0, 256, 128);
+  
+  // Dark Medical Monitor Display
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(0, 0, 512, 256);
 
-  ctx.strokeStyle = '#10b981';
-  ctx.lineWidth = 2;
+  // Green ECG Trace (Channel 1)
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(10, 64);
-  ctx.lineTo(60, 64);
-  ctx.lineTo(75, 20);
-  ctx.lineTo(90, 105);
-  ctx.lineTo(105, 50);
-  ctx.lineTo(120, 64);
-  ctx.lineTo(240, 64);
+  ctx.moveTo(10, 60);
+  ctx.lineTo(80, 60);
+  ctx.lineTo(100, 20);
+  ctx.lineTo(120, 105);
+  ctx.lineTo(140, 45);
+  ctx.lineTo(160, 60);
+  ctx.lineTo(260, 60);
+  ctx.lineTo(280, 20);
+  ctx.lineTo(300, 105);
+  ctx.lineTo(320, 45);
+  ctx.lineTo(340, 60);
+  ctx.lineTo(500, 60);
   ctx.stroke();
 
-  ctx.fillStyle = '#10b981';
-  ctx.font = 'bold 16px monospace';
-  ctx.fillText('HR: 78 BPM', 15, 24);
-  ctx.fillText('SpO2: 98%', 15, 115);
+  // Cyan SpO2 Plethysmograph Wave (Channel 2)
+  ctx.strokeStyle = '#06b6d4';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let x = 10; x <= 500; x += 30) {
+    ctx.lineTo(x, 150 + Math.sin(x * 0.1) * 18);
+  }
+  ctx.stroke();
+
+  // Monitor Telemetry Values
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 24px monospace';
+  ctx.fillText('HR: 76 BPM', 20, 36);
+
+  ctx.fillStyle = '#06b6d4';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('SpO2: 99%', 220, 36);
+
+  ctx.fillStyle = '#f59e0b';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('NIBP: 120/80', 360, 36);
+
+  ctx.fillStyle = '#ef4444';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('TEMP: 37.1°C', 20, 235);
+
+  ctx.fillStyle = '#a855f7';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('RESP: 18 /min', 220, 235);
 
   const tex = new THREE.CanvasTexture(canvas);
   return tex;
@@ -1022,159 +1076,278 @@ class LifeLensVRApp {
   }
 
   // ==========================================================================
-  // 5. 3D HOSPITAL EMERGENCY TRAUMA COMPLEX
+  // 5. ULTRA-DETAILED 3D HOSPITAL EMERGENCY TRAUMA COMPLEX
   // ==========================================================================
   build3DHospitalComplex() {
     this.vrHotspots = [];
 
-    // 1. Polished Hospital Tiled Floor
-    const floorGeo = new THREE.PlaneGeometry(24, 24);
+    // 1. Polished Hospital Tiled Floor (Reflective Medical Ceramic)
+    const floorGeo = new THREE.PlaneGeometry(28, 28);
     const floorMat = new THREE.MeshStandardMaterial({
       map: createHospitalTileTexture(),
-      roughness: 0.25,
-      metalness: 0.15
+      roughness: 0.18,
+      metalness: 0.12
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.receiveShadow = true;
     this.vrScene.add(floorMesh);
 
-    // 2. Hospital Walls (Clean White with Mint-Teal Protective Base)
-    const wallMat = new THREE.MeshStandardMaterial({ map: createHospitalWallTexture(), roughness: 0.4 });
+    // Yellow Floor Tactile Hazard Guidance Strip to ICU
+    const yellowStripe = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 20), new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 }));
+    yellowStripe.rotation.x = -Math.PI / 2;
+    yellowStripe.position.set(-0.8, 0.015, 0);
+    this.vrScene.add(yellowStripe);
+
+    // 2. Hospital Walls (Clean Clinical White with Teal Crash Bumpers)
+    const wallMat = new THREE.MeshStandardMaterial({ map: createHospitalWallTexture(), roughness: 0.35 });
     
     // Back Wall
-    const backWall = new THREE.Mesh(new THREE.BoxGeometry(24, 6, 0.4), wallMat);
-    backWall.position.set(0, 3, -12);
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(28, 6.5, 0.5), wallMat);
+    backWall.position.set(0, 3.25, -14);
+    backWall.receiveShadow = true;
     this.vrScene.add(backWall);
 
     // Left & Right Walls
-    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6, 24), wallMat);
-    leftWall.position.set(-12, 3, 0);
+    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6.5, 28), wallMat);
+    leftWall.position.set(-14, 3.25, 0);
+    leftWall.receiveShadow = true;
     this.vrScene.add(leftWall);
 
-    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6, 24), wallMat);
-    rightWall.position.set(12, 3, 0);
+    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6.5, 28), wallMat);
+    rightWall.position.set(14, 3.25, 0);
+    rightWall.receiveShadow = true;
     this.vrScene.add(rightWall);
 
-    // 3. Fluorescent Surgical Ceiling Strip Lights
-    for (let zPos of [-7, 0, 7]) {
-      const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 0.6), new THREE.MeshStandardMaterial({ color: 0x334155 }));
-      lampHousing.position.set(0, 5.8, zPos);
-      this.vrScene.add(lampHousing);
+    // 3. Suspended Acoustic Ceiling Grid & Recessed LED Troffer Panels
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
+    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(28, 28), ceilingMat);
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.set(0, 6.4, 0);
+    this.vrScene.add(ceiling);
 
-      const lampTube = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.05, 0.4), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.2 }));
-      lampTube.position.set(0, 5.75, zPos);
-      this.vrScene.add(lampTube);
+    // 6 Recessed Fluorescent LED Panels
+    for (let xPos of [-6, 6]) {
+      for (let zPos of [-8, 0, 8]) {
+        const trofferHousing = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.1, 1.4), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+        trofferHousing.position.set(xPos, 6.35, zPos);
+        this.vrScene.add(trofferHousing);
+
+        const trofferDiffuser = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.05, 1.2), new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          emissive: 0xffffff,
+          emissiveIntensity: 1.35
+        }));
+        trofferDiffuser.position.set(xPos, 6.32, zPos);
+        this.vrScene.add(trofferDiffuser);
+      }
     }
 
-    // 4. Emergency Signboard
-    const emergSign = new THREE.Mesh(new THREE.BoxGeometry(5.5, 1.0, 0.15), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0xdc2626, emissiveIntensity: 0.7 }));
-    emergSign.position.set(0, 4.8, -11.7);
-    this.vrScene.add(emergSign);
+    // 4. Wall-Mounted Medical Gas Manifold Outlets (O2, Vacuum, N2O Behind Beds)
+    [[-8, -6], [-8, 0], [-8, 6]].forEach(pos => {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.4, 0.08), new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 }));
+      panel.position.set(pos[0], 2.2, -13.7);
+      this.vrScene.add(panel);
 
-    // 5. Hospital Triage Reception Desk (1.2m Unreachable Counter)
-    const deskMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3 });
-    const glassBarrierMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, roughness: 0.1 });
+      // Green O2, Yellow Vacuum, Blue N2O Ports
+      const o2Port = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 8), new THREE.MeshStandardMaterial({ color: 0x10b981 }));
+      o2Port.rotation.x = Math.PI / 2;
+      o2Port.position.set(pos[0] - 0.4, 2.2, -13.62);
+      this.vrScene.add(o2Port);
 
-    const deskBody = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.2, 1.4), deskMat);
-    deskBody.position.set(5.5, 0.6, -7);
+      const vacPort = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 8), new THREE.MeshStandardMaterial({ color: 0xf59e0b }));
+      vacPort.rotation.x = Math.PI / 2;
+      vacPort.position.set(pos[0], 2.2, -13.62);
+      this.vrScene.add(vacPort);
+
+      const airPort = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 8), new THREE.MeshStandardMaterial({ color: 0x0284c7 }));
+      airPort.rotation.x = Math.PI / 2;
+      airPort.position.set(pos[0] + 0.4, 2.2, -13.62);
+      this.vrScene.add(airPort);
+    });
+
+    // 5. Wall Hand Sanitizer Dispensers & Biohazard Bins
+    for (let xPos of [-2, 10]) {
+      const dispenser = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.35, 0.12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+      dispenser.position.set(xPos, 1.5, -13.7);
+      this.vrScene.add(dispenser);
+
+      const blueNozzle = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.06), new THREE.MeshStandardMaterial({ color: 0x38bdf8 }));
+      blueNozzle.position.set(xPos, 1.35, -13.62);
+      this.vrScene.add(blueNozzle);
+
+      // Yellow Biohazard Waste Bin
+      const bin = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.18, 0.65, 12), new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 }));
+      bin.position.set(xPos, 0.325, -13.2);
+      this.vrScene.add(bin);
+    }
+
+    // 6. Wall-Mounted Digital Emergency Clock
+    const clockHousing = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.55, 0.1), new THREE.MeshStandardMaterial({ color: 0x090e1a }));
+    clockHousing.position.set(0, 4.8, -13.7);
+    this.vrScene.add(clockHousing);
+
+    const clockDisplay = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.38, 0.04), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0xdc2626, emissiveIntensity: 0.9 }));
+    clockDisplay.position.set(0, 4.8, -13.64);
+    this.vrScene.add(clockDisplay);
+
+    // 7. Hospital Triage Reception Desk (1.2m Unreachable Counter with Glass Screen)
+    const deskMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.25 });
+    const glassBarrierMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4, roughness: 0.1 });
+
+    const deskBody = new THREE.Mesh(new THREE.BoxGeometry(6.2, 1.2, 1.5), deskMat);
+    deskBody.position.set(6.5, 0.6, -7.5);
     deskBody.castShadow = true;
     this.vrScene.add(deskBody);
 
-    const glassPartition = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.9, 0.06), glassBarrierMat);
-    glassPartition.position.set(5.5, 1.65, -6.4);
+    const glassPartition = new THREE.Mesh(new THREE.BoxGeometry(6.0, 1.1, 0.06), glassBarrierMat);
+    glassPartition.position.set(6.5, 1.75, -6.8);
     this.vrScene.add(glassPartition);
 
-    // Nurse PC Monitor
-    const monitor = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.45, 0.08), new THREE.MeshStandardMaterial({ color: 0x090e1a }));
-    monitor.position.set(5.5, 1.45, -7.1);
+    // Nurse PC Monitor & Desk Accessories
+    const monitor = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.48, 0.08), new THREE.MeshStandardMaterial({ color: 0x090e1a }));
+    monitor.position.set(6.5, 1.45, -7.7);
     this.vrScene.add(monitor);
 
-    // 6. Inpatient Hospital Beds (High 0.85m Bed Hazard vs Lowered 0.45m Accessible Bed)
-    const bedHeight = this.isAccessibleVR ? 0.48 : 0.85;
-    const steelMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
-    const sheetMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.6 });
-    const pillowMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+    const keyboard = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.18), new THREE.MeshStandardMaterial({ color: 0x334155 }));
+    keyboard.position.set(6.5, 1.21, -7.3);
+    this.vrScene.add(keyboard);
 
-    [[-6.5, -6], [-6.5, 0], [-6.5, 6]].forEach((pos, idx) => {
+    // 8. Articulated Electric Inpatient Hospital Beds (0.85m High Barrier vs 0.45m Accessible Bed)
+    const bedHeight = this.isAccessibleVR ? 0.48 : 0.85;
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
+    const mattressMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.6 });
+    const pillowMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+    const patientSkinMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.55 });
+    const patientGownMat = new THREE.MeshStandardMaterial({ color: 0x93c5fd, roughness: 0.6 });
+
+    [[-8.5, -6], [-8.5, 0], [-8.5, 6]].forEach((pos, idx) => {
       const bedGroup = new THREE.Group();
       bedGroup.position.set(pos[0], 0, pos[1]);
 
-      // Frame
-      const frame = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.1, 1.2), steelMat);
-      frame.position.y = bedHeight;
-      frame.castShadow = true;
-      bedGroup.add(frame);
+      // Steel Base Chassis
+      const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.12, 1.25), chromeMat);
+      chassis.position.y = bedHeight;
+      chassis.castShadow = true;
+      bedGroup.add(chassis);
 
-      // Mattress & Blanket
-      const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.22, 1.15), sheetMat);
-      mattress.position.y = bedHeight + 0.16;
-      bedGroup.add(mattress);
+      // Articulated Mattress (Elevated 30° Backrest Head Section)
+      const headRest = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.22, 1.2), mattressMat);
+      headRest.position.set(-0.8, bedHeight + 0.25, 0);
+      headRest.rotation.z = -0.32;
+      bedGroup.add(headRest);
+
+      const mainMattress = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.22, 1.2), mattressMat);
+      mainMattress.position.set(0.4, bedHeight + 0.14, 0);
+      bedGroup.add(mainMattress);
 
       // Pillow
-      const pillow = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.1, 0.8), pillowMat);
-      pillow.position.set(-0.85, bedHeight + 0.3, 0);
+      const pillow = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.12, 0.85), pillowMat);
+      pillow.position.set(-1.0, bedHeight + 0.38, 0);
+      pillow.rotation.z = -0.32;
       bedGroup.add(pillow);
 
-      // Legs
-      for (let lx of [-1.1, 1.1]) {
+      // Chrome Castor Legs
+      for (let lx of [-1.15, 1.15]) {
         for (let lz of [-0.55, 0.55]) {
-          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, bedHeight, 8), steelMat);
+          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, bedHeight, 8), chromeMat);
           leg.position.set(lx, bedHeight / 2, lz);
           bedGroup.add(leg);
+
+          const wheel = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+          wheel.position.set(lx, 0.05, lz);
+          bedGroup.add(wheel);
         }
       }
 
-      // Bed Side Rails (Barrier on high bed vs transfer gap on accessible bed)
+      // Side Guard Rails
       if (!this.isAccessibleVR) {
-        const sideRail = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.35, 0.04), steelMat);
-        sideRail.position.set(0.1, bedHeight + 0.4, 0.58);
+        const sideRail = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.38, 0.04), chromeMat);
+        sideRail.position.set(0.1, bedHeight + 0.42, 0.62);
         bedGroup.add(sideRail);
+      }
+
+      // Inpatient resting on Bed #2 (Middle Bed)
+      if (idx === 1) {
+        const patientBody = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.18, 0.5), patientGownMat);
+        patientBody.position.set(0.2, bedHeight + 0.32, 0);
+        bedGroup.add(patientBody);
+
+        const patientHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), patientSkinMat);
+        patientHead.position.set(-0.85, bedHeight + 0.48, 0);
+        bedGroup.add(patientHead);
       }
 
       this.vrScene.add(bedGroup);
     });
 
-    // 7. Medical IV Drip Stands
-    [[-4.8, -6], [-4.8, 0], [-4.8, 6]].forEach(pos => {
-      const ivPole = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 2.4, 8), steelMat);
-      ivPole.position.set(pos[0], 1.2, pos[1] - 0.7);
-      this.vrScene.add(ivPole);
-
-      const ivBag = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.28, 0.08), new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 }));
-      ivBag.position.set(pos[0], 2.2, pos[1] - 0.7);
-      this.vrScene.add(ivBag);
-    });
-
-    // 8. ICU Vital Signs ECG Monitors
-    [[-4.8, -4.5], [-4.8, 1.5]].forEach(pos => {
-      const ecgPole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.8, 8), steelMat);
-      ecgPole.position.set(pos[0], 0.9, pos[1]);
+    // 9. Multi-Parameter Vital Signs ECG Monitors
+    [[-6.2, -4.5], [-6.2, 1.5], [-6.2, 7.5]].forEach(pos => {
+      const ecgPole = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 1.9, 8), chromeMat);
+      ecgPole.position.set(pos[0], 0.95, pos[1]);
       this.vrScene.add(ecgPole);
 
-      const screenBox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.35, 0.1), new THREE.MeshStandardMaterial({ map: createECGScreenTexture() }));
-      screenBox.position.set(pos[0], 1.7, pos[1]);
-      this.vrScene.add(screenBox);
+      const monitorBox = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.42, 0.12), new THREE.MeshStandardMaterial({ map: createECGScreenTexture() }));
+      monitorBox.position.set(pos[0], 1.75, pos[1]);
+      this.vrScene.add(monitorBox);
     });
 
-    // 9. Stretcher Trolley & Crash Cart
-    const trolley = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.75, 0.9), steelMat);
-    trolley.position.set(5.5, 0.4, 2);
-    this.vrScene.add(trolley);
+    // 10. Medical IV Drip Stands with Saline Bottles & Tubing
+    [[-6.2, -6.8], [-6.2, -0.8], [-6.2, 5.2]].forEach(pos => {
+      const ivPole = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 2.4, 8), chromeMat);
+      ivPole.position.set(pos[0], 1.2, pos[1]);
+      this.vrScene.add(ivPole);
 
-    const oxyBottle = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.65, 12), new THREE.MeshStandardMaterial({ color: 0x10b981 }));
-    oxyBottle.position.set(5.5, 0.9, 1.6);
-    this.vrScene.add(oxyBottle);
+      const ivHooks = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 0.02), chromeMat);
+      ivHooks.position.set(pos[0], 2.38, pos[1]);
+      this.vrScene.add(ivHooks);
 
-    // 10. Doctor & Nurse Staff NPCs
+      const ivBag1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.07), new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 }));
+      ivBag1.position.set(pos[0] - 0.1, 2.2, pos[1]);
+      this.vrScene.add(ivBag1);
+
+      const ivBag2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.07), new THREE.MeshStandardMaterial({ color: 0xffedd5, transparent: true, opacity: 0.65 }));
+      ivBag2.position.set(pos[0] + 0.1, 2.2, pos[1]);
+      this.vrScene.add(ivBag2);
+    });
+
+    // 11. Stainless Steel Emergency Crash Cart with Defibrillator
+    const crashCartGroup = new THREE.Group();
+    crashCartGroup.position.set(5.5, 0, 1.5);
+
+    const cartBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.95, 0.75), chromeMat);
+    cartBody.position.y = 0.55;
+    crashCartGroup.add(cartBody);
+
+    // Multi-color drug drawers
+    const drawerColors = [0xef4444, 0x3b82f6, 0xf59e0b, 0x10b981];
+    drawerColors.forEach((col, dIdx) => {
+      const drawer = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.16, 0.04), new THREE.MeshStandardMaterial({ color: col }));
+      drawer.position.set(0, 0.82 - (dIdx * 0.2), 0.38);
+      crashCartGroup.add(drawer);
+    });
+
+    // Defibrillator Unit on top tray
+    const defib = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.32), new THREE.MeshStandardMaterial({ color: 0xdc2626 }));
+    defib.position.set(-0.25, 1.12, 0);
+    crashCartGroup.add(defib);
+
+    // Oxygen Tank with Brass Gauge
+    const oxyTank = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), new THREE.MeshStandardMaterial({ color: 0x15803d }));
+    oxyTank.position.set(0.35, 1.15, 0);
+    crashCartGroup.add(oxyTank);
+
+    this.vrScene.add(crashCartGroup);
+
+    // 12. Hospital Medical Staff NPCs
     this.buildHospitalStaffNPCs();
 
-    // 11. Hospital Barriers Hotspots
+    // 13. Hospital Barriers Hotspots
     const hospitalHotspots = [
       {
         id: "bed-hs",
         title: "Inaccessible 0.85m High Hospital Bed",
-        position: [-6.5, 1.2, 0],
+        position: [-8.5, 1.2, 0],
         problem: "Hospital bed is 0.85m high with locked side-rails and no transfer board. A patient on the floor or standard wheelchair cannot self-transfer, forcing humiliating manual lifting.",
         solution: "Motorized height-adjustable hospital bed (380mm to 850mm range) with collapsible side rails and ceiling transfer hoist.",
         cost: "₹85,000",
@@ -1184,7 +1357,7 @@ class LifeLensVRApp {
       {
         id: "triage-hs",
         title: "Unreachable 1.2m Triage Reception Desk",
-        position: [5.5, 1.5, -7],
+        position: [6.5, 1.5, -7.5],
         problem: "Glass inquiry counter is at standing eye-level. A person crawling or in a low wheelchair cannot see the receptionist, submit documents, or speak through the high microphone.",
         solution: "Dual-height 750mm lowered reception counter bay with 480mm deep knee clearance and low-level intercom speaker.",
         cost: "₹32,000",
@@ -1220,33 +1393,46 @@ class LifeLensVRApp {
   }
 
   buildHospitalStaffNPCs() {
-    // Doctor NPC in White Coat
+    // Senior Consultant Doctor in White Lab Coat & Stethoscope
     const docGroup = new THREE.Group();
-    docGroup.position.set(4.5, 0, -5.5);
+    docGroup.position.set(4.8, 0, -5.2);
+    docGroup.rotation.y = -Math.PI / 4;
 
     const docHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshStandardMaterial({ color: 0xdeb887 }));
     docHead.position.y = 1.55;
     docGroup.add(docHead);
 
-    const docCoat = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.85, 0.24), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 }));
+    const docHair = new THREE.Mesh(new THREE.SphereGeometry(0.125, 14, 14, 0, Math.PI * 2, 0, Math.PI / 1.7), new THREE.MeshStandardMaterial({ color: 0x475569 }));
+    docHair.position.y = 1.57;
+    docGroup.add(docHair);
+
+    const docCoat = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.88, 0.24), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 }));
     docCoat.position.y = 1.05;
+    docCoat.castShadow = true;
     docGroup.add(docCoat);
 
-    const stetho = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.015, 8, 16), new THREE.MeshStandardMaterial({ color: 0x090e1a }));
-    stetho.position.set(0, 1.35, 0.1);
+    // Stethoscope
+    const stetho = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.014, 8, 16), new THREE.MeshStandardMaterial({ color: 0x090e1a }));
+    stetho.position.set(0, 1.36, 0.1);
     docGroup.add(stetho);
+
+    // Medical Chart Clipboard in hand
+    const clipboard = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.32, 0.02), new THREE.MeshStandardMaterial({ color: 0xca8a04 }));
+    clipboard.position.set(0.18, 1.08, 0.22);
+    clipboard.rotation.x = 0.4;
+    docGroup.add(clipboard);
 
     this.vrScene.add(docGroup);
 
-    // Nurse NPC in Turquoise Scrubs
+    // Charge Nurse in Turquoise Scrubs at Reception Desk
     const nurseGroup = new THREE.Group();
-    nurseGroup.position.set(-3.5, 0, -2);
+    nurseGroup.position.set(6.5, 0, -8.2);
 
     const nurseHead = new THREE.Mesh(new THREE.SphereGeometry(0.115, 16, 16), new THREE.MeshStandardMaterial({ color: 0xdeb887 }));
     nurseHead.position.y = 1.52;
     nurseGroup.add(nurseHead);
 
-    const nurseScrubs = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.5, 0.22), new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.6 }));
+    const nurseScrubs = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.54, 0.22), new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.5 }));
     nurseScrubs.position.y = 1.15;
     nurseGroup.add(nurseScrubs);
 
