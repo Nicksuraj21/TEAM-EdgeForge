@@ -804,8 +804,9 @@ class LifeLensVRApp {
     const height = container.clientHeight || 580;
 
     this.vrScene = new THREE.Scene();
-    this.vrScene.background = new THREE.Color(this.currentEnvironment === 'hospital' ? 0x0f172a : 0x0a0f1d);
-    this.vrScene.fog = new THREE.FogExp2(this.currentEnvironment === 'hospital' ? 0x0f172a : 0x0a0f1d, 0.012);
+    this.vrScene.background = new THREE.Color(this.currentEnvironment === 'hospital' ? 0x0b1120 : 0x0f172a);
+    // Crisp clear atmosphere without washed-out gray fog
+    this.vrScene.fog = new THREE.Fog(this.currentEnvironment === 'hospital' ? 0x0b1120 : 0x0f172a, 35, 120);
 
     this.vrCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
     this.vrLeftCamera = new THREE.PerspectiveCamera(60, (width / 2) / height, 0.1, 1000);
@@ -816,9 +817,8 @@ class LifeLensVRApp {
     this.vrRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.vrRenderer.shadowMap.enabled = true;
     this.vrRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.vrRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.vrRenderer.toneMappingExposure = 1.25;
-    this.vrRenderer.outputEncoding = THREE.sRGBEncoding;
+    this.vrRenderer.toneMapping = THREE.LinearToneMapping;
+    this.vrRenderer.toneMappingExposure = 1.05;
     this.vrRenderer.autoClear = false;
 
     if (this.vrRenderer.xr) {
@@ -870,12 +870,12 @@ class LifeLensVRApp {
 
     container.appendChild(canvas);
 
-    // Photorealistic 3-Point Studio & Atmospheric Lighting
+    // Crisp, Vibrant & High-Contrast Lighting
     if (this.currentEnvironment === 'hospital') {
-      const ambientSky = new THREE.HemisphereLight(0xf8fafc, 0x0f172a, 0.95);
+      const ambientSky = new THREE.AmbientLight(0xffffff, 0.85);
       this.vrScene.add(ambientSky);
 
-      const mainSurgical = new THREE.DirectionalLight(0xffffff, 1.4);
+      const mainSurgical = new THREE.DirectionalLight(0xffffff, 1.25);
       mainSurgical.position.set(4, 14, 6);
       mainSurgical.castShadow = true;
       mainSurgical.shadow.mapSize.width = 2048;
@@ -883,16 +883,16 @@ class LifeLensVRApp {
       mainSurgical.shadow.bias = -0.0001;
       this.vrScene.add(mainSurgical);
 
-      const rimCyanLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
-      rimCyanLight.position.set(-8, 8, -8);
-      this.vrScene.add(rimCyanLight);
+      const cyanFill = new THREE.PointLight(0x06b6d4, 0.6, 25);
+      cyanFill.position.set(-6, 5, -5);
+      this.vrScene.add(cyanFill);
 
       this.build3DHospitalComplex();
     } else {
-      const ambientSky = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.85);
+      const ambientSky = new THREE.AmbientLight(0xffffff, 0.75);
       this.vrScene.add(ambientSky);
 
-      const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.6);
+      const sunLight = new THREE.DirectionalLight(0xfffaed, 1.35);
       sunLight.position.set(24, 38, 22);
       sunLight.castShadow = true;
       sunLight.shadow.mapSize.width = 2048;
@@ -900,7 +900,7 @@ class LifeLensVRApp {
       sunLight.shadow.bias = -0.0001;
       this.vrScene.add(sunLight);
 
-      const skyRimLight = new THREE.DirectionalLight(0x38bdf8, 0.55);
+      const skyRimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
       skyRimLight.position.set(-20, 16, -18);
       this.vrScene.add(skyRimLight);
 
