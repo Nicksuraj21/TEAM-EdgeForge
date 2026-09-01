@@ -1,0 +1,713 @@
+/* ==========================================================================
+   LifeLens VR - Dedicated Disability Empathy VR Design System
+   "Experience Lived Disabilities in VR. Build Universal Inclusion."
+   Futuristic Cyber Goggles HUD, Spatial Audio Visualizer, 3D WebXR, Meta Quest VR Box, Hospital & Fullscreen Engine
+   ========================================================================== */
+
+:root {
+  /* Ambient Cyber Neon Gradient */
+  --bg-gradient: radial-gradient(circle at 10% 20%, #7c3aed 0%, transparent 45%),
+                 radial-gradient(circle at 90% 80%, #0284c7 0%, transparent 45%),
+                 radial-gradient(circle at 50% 50%, #d946ef 0%, transparent 50%),
+                 #090d16;
+
+  /* Master Canvas Frame (Aqua / Mint Cyber Glass) */
+  --canvas-frame-bg: linear-gradient(135deg, #64cfbe 0%, #76d3c4 40%, #c4a1e6 75%, #f49ec7 100%);
+  
+  /* Mint Bento Card */
+  --mint-card-gradient: linear-gradient(145deg, #d3f9e7 0%, #c1f2dc 100%);
+  --mint-card-border: rgba(255, 255, 255, 0.95);
+
+  /* Primary Action Magenta Pill */
+  --magenta-base: #d946ef;
+  --magenta-gradient: linear-gradient(135deg, #e879f9 0%, #d946ef 60%, #c026d3 100%);
+  --magenta-shadow: 0 8px 24px rgba(217, 70, 239, 0.45);
+
+  /* Deep High-Contrast Typography */
+  --text-dark: #090e1a;
+  --text-body: #1e293b;
+  --text-muted: #475569;
+  
+  /* Card Backgrounds */
+  --card-white: #ffffff;
+  --card-white-translucent: rgba(255, 255, 255, 0.95);
+
+  /* Radii */
+  --radius-master: 44px;
+  --radius-bento: 32px;
+  --radius-pill: 9999px;
+}
+
+/* Base Body */
+body.neo-bento-body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 16px 40px 16px;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Master Inset Bento Viewport Frame */
+.neo-bento-master-wrapper {
+  width: 100%;
+  max-width: 1380px;
+  background: var(--canvas-frame-bg);
+  border-radius: var(--radius-master);
+  padding: 20px 28px 36px 28px;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.35), 0 4px 16px rgba(15, 23, 42, 0.15);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   1. Ultra-Clean Header
+   ========================================================================== */
+.neo-bento-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 100;
+}
+
+.neo-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 900;
+  font-size: 1.35rem;
+  letter-spacing: -0.5px;
+}
+
+.neo-brand-icon-box {
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.neo-brand-icon-box svg {
+  width: 22px;
+  height: 22px;
+  color: var(--magenta-base);
+}
+
+/* Clean Notched Navigation Bar */
+.neo-nav-notch-container {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 5px 8px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.neo-nav-tab {
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 800;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neo-nav-tab:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-dark);
+}
+
+.neo-nav-tab.active {
+  background: var(--magenta-gradient);
+  color: #ffffff !important;
+  box-shadow: var(--magenta-shadow);
+}
+
+/* Header Right Accessibility Pill */
+.neo-header-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.neo-a11y-pill-btn {
+  background: #ffffff;
+  color: var(--text-dark);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.neo-a11y-pill-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   2. Compact Hero Bento Grid
+   ========================================================================== */
+.neo-hero-bento-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 22px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.neo-mint-hero-card {
+  background: var(--mint-card-gradient);
+  border-radius: var(--radius-bento);
+  padding: 40px 38px 32px 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1.5px solid var(--mint-card-border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05), inset 0 2px 6px rgba(255, 255, 255, 0.8);
+}
+
+.neo-hero-title-bold {
+  font-size: clamp(2.4rem, 3.8vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -1.8px;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.neo-hero-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.neo-magenta-cta-btn {
+  background: var(--magenta-gradient);
+  color: #ffffff !important;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.02rem;
+  padding: 13px 28px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--magenta-shadow);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  cursor: pointer;
+}
+
+.neo-magenta-cta-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(217, 70, 239, 0.6);
+  color: #ffffff !important;
+}
+
+.neo-hero-avatar-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #ffffff;
+}
+
+.neo-hero-micro-desc {
+  font-size: 0.96rem;
+  color: var(--text-body);
+  line-height: 1.55;
+  margin-bottom: 20px;
+  max-width: 480px;
+  font-weight: 600;
+}
+
+.neo-hero-stats-strip {
+  display: flex;
+  align-items: baseline;
+  gap: 36px;
+  border-top: 1px solid rgba(9, 14, 26, 0.12);
+  padding-top: 20px;
+}
+
+.neo-stat-metric-block {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.neo-stat-num {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--text-dark);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.neo-stat-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   3. Single Sleek Full-Height Right Visual Card
+   ========================================================================== */
+.neo-single-visual-card {
+  background: linear-gradient(135deg, #1e1b4b, #0f172a);
+  border-radius: var(--radius-bento);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  height: 100%;
+  min-height: 380px;
+}
+
+.neo-single-visual-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.94;
+  transition: transform 0.5s ease;
+}
+
+.neo-single-visual-card:hover img {
+  transform: scale(1.03);
+}
+
+.neo-orbit-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 76px;
+  height: 76px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.neo-orbit-badge-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: rotate-badge 14s linear infinite;
+}
+
+@keyframes rotate-badge {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.neo-orbit-arrow {
+  font-size: 1.4rem;
+  color: var(--magenta-base);
+  font-weight: 900;
+  transform: rotate(45deg);
+}
+
+.neo-visual-overlay-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================================================
+   4. Harmonious Bento Cards
+   ========================================================================== */
+.neo-content-bento-card {
+  background: var(--card-white-translucent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-bento);
+  padding: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05), inset 0 2px 6px rgba(255, 255, 255, 0.8);
+  color: var(--text-dark);
+  margin-bottom: 24px;
+}
+
+.neo-content-bento-card h1,
+.neo-content-bento-card h2,
+.neo-content-bento-card h3,
+.neo-content-bento-card h4 {
+  color: var(--text-dark) !important;
+  font-weight: 900;
+}
+
+.neo-content-bento-card p {
+  color: var(--text-body) !important;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   5. VR Control Buttons, Hospital & Fullscreen
+   ========================================================================== */
+.cam-view-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-dark);
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.cam-view-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.cam-view-btn.active {
+  background: var(--text-dark);
+  color: #ffffff !important;
+  border-color: var(--text-dark);
+}
+
+/* Environment Switcher Buttons (Campus vs Hospital) */
+.vr-env-btn {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-dark);
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.vr-env-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.vr-env-btn.active {
+  background: #0284c7;
+  color: #ffffff !important;
+  border-color: #0284c7;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+
+/* Floor Crawling / Severe Mobility Struggle Button */
+.vr-crawl-toggle-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff !important;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+  transition: all 0.2s ease;
+}
+
+.vr-crawl-toggle-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.6);
+}
+
+.vr-crawl-toggle-btn.crawling-active {
+  background: linear-gradient(135deg, #dc2626, #7f1d1d);
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
+  animation: crawl-pulse 1.2s infinite alternate;
+}
+
+@keyframes crawl-pulse {
+  from { box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
+  to { box-shadow: 0 0 28px rgba(220, 38, 38, 0.95); }
+}
+
+/* VR Box & Meta Quest Mode Button */
+.vr-meta-quest-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  color: #ffffff !important;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+  transition: all 0.2s ease;
+}
+
+.vr-meta-quest-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.6);
+}
+
+.vr-meta-quest-btn.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Fullscreen Button */
+.vr-fullscreen-btn {
+  background: #ffffff;
+  color: var(--text-dark) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.vr-fullscreen-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.vr-fullscreen-btn.active {
+  background: var(--text-dark);
+  color: #ffffff !important;
+}
+
+/* Floating Corner Fullscreen Toggle Button */
+.vr-floating-fs-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.vr-floating-fs-btn:hover {
+  background: rgba(15, 23, 42, 0.95);
+  transform: scale(1.08);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* VR Box Split-Screen Center Divider */
+.vr-stereoscopic-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  background: rgba(0, 0, 0, 0.95);
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: none;
+  display: none;
+}
+
+.vr-stereoscopic-divider.active {
+  display: block;
+}
+
+/* On-Screen Virtual Driving Controls (D-Pad & Auto-Demo Tour) */
+.vr-virtual-dpad-container {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 25;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  padding: 12px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.vr-dpad-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.vr-dpad-btn:active, .vr-dpad-btn.pressed {
+  background: var(--magenta-gradient);
+  transform: scale(0.92);
+  box-shadow: 0 0 14px rgba(217, 70, 239, 0.8);
+}
+
+.vr-auto-tour-btn {
+  background: var(--magenta-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--magenta-shadow);
+  transition: all 0.2s ease;
+}
+
+.vr-auto-tour-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(217, 70, 239, 0.6);
+}
+
+.vr-auto-tour-btn.running {
+  background: linear-gradient(135deg, #10b981, #059669);
+  animation: tour-pulse 1.2s infinite alternate;
+}
+
+/* Perspective Selector Bar */
+.empathy-mode-selector-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.empathy-pill-btn {
+  background: #ffffff;
+  color: var(--text-dark);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.empathy-pill-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.empathy-pill-btn.active {
+  background: var(--text-dark);
+  color: #ffffff !important;
+  border-color: var(--text-dark);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Native Fullscreen CSS Handling */
+:fullscreen .vr-viewer-wrapper,
+:-webkit-full-screen .vr-viewer-wrapper,
+:-moz-full-screen .vr-viewer-wrapper,
+:-ms-fullscreen .vr-viewer-wrapper {
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .neo-hero-bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .neo-single-visual-card {
+    min-height: 280px;
+  }
+  .neo-nav-notch-container {
+    overflow-x: auto;
+  }
+  .neo-bento-master-wrapper {
+    padding: 16px 16px 28px 16px;
+  }
+}

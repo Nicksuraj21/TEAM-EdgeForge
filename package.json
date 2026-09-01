@@ -1,0 +1,26 @@
+{
+  "name": "barrierverse-mern-platform",
+  "version": "2.0.0",
+  "description": "BarrierVerse - VR + AI Accessibility Social Impact Platform",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "keywords": [
+    "accessibility",
+    "vr",
+    "webxr",
+    "mern",
+    "social-impact",
+    "inclusion",
+    "open-source"
+  ],
+  "author": "BarrierVerse Community",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

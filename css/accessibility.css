@@ -1,0 +1,411 @@
+/* ==========================================================================
+   BarrierVerse - Accessibility CSS (WCAG 2.2 AAA Compliance Suite)
+   ========================================================================== */
+
+/* Persistent Floating Accessibility Trigger */
+.a11y-floating-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 9999px;
+  padding: 12px 20px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 52px;
+}
+
+.a11y-floating-trigger:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 36px rgba(59, 130, 246, 0.7);
+}
+
+.a11y-floating-trigger svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Accessibility Drawer Modal */
+.a11y-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.a11y-drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.a11y-drawer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  max-width: 440px;
+  background: #0f172a;
+  border-left: 2px solid #3b82f6;
+  z-index: 10001;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+}
+
+.a11y-drawer.active {
+  transform: translateX(0);
+}
+
+.a11y-drawer-header {
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.a11y-drawer-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.a11y-drawer-close {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.a11y-drawer-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.a11y-drawer-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.a11y-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.a11y-control-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.a11y-btn-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.a11y-btn {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 52px;
+  text-align: center;
+}
+
+.a11y-btn:hover {
+  background: #334155;
+  border-color: #60a5fa;
+}
+
+.a11y-btn.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+}
+
+.a11y-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #1e293b;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.a11y-toggle-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.a11y-toggle-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #f8fafc;
+}
+
+.a11y-toggle-desc {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Switch Toggle UI */
+.switch-input {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.switch-input input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-round {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #475569;
+  transition: 0.25s;
+  border-radius: 34px;
+}
+
+.slider-round:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.25s;
+  border-radius: 50%;
+}
+
+input:checked + .slider-round {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider-round:before {
+  transform: translateX(24px);
+}
+
+/* Reading Ruler Element */
+#reading-ruler {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: rgba(255, 255, 0, 0.18);
+  border-top: 2px solid #facc15;
+  border-bottom: 2px solid #facc15;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translateY(-50%);
+}
+
+#reading-ruler.active {
+  display: block;
+}
+
+/* ==========================================================================
+   High Contrast Modes
+   ========================================================================== */
+
+/* 1. High Contrast Dark Mode */
+body.theme-high-contrast-dark {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #0a0a0a !important;
+  --bg-tertiary: #141414 !important;
+  --bg-surface: #000000 !important;
+  --bg-glass: #000000 !important;
+  --text-primary: #ffffff !important;
+  --text-secondary: #ffff00 !important;
+  --text-muted: #00ffff !important;
+  --border-color: #ffffff !important;
+  --border-highlight: #00ffff !important;
+  --border-focus: #ffff00 !important;
+  --primary: #00ffff !important;
+  --secondary: #ffff00 !important;
+}
+
+body.theme-high-contrast-dark .glass-card,
+body.theme-high-contrast-dark .step-card,
+body.theme-high-contrast-dark .stat-card {
+  border: 2px solid #ffffff !important;
+  background: #000000 !important;
+}
+
+body.theme-high-contrast-dark a,
+body.theme-high-contrast-dark .nav-link {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+
+/* 2. High Contrast Light Mode */
+body.theme-high-contrast-light {
+  --bg-primary: #ffffff !important;
+  --bg-secondary: #f4f4f5 !important;
+  --bg-tertiary: #e4e4e7 !important;
+  --bg-surface: #ffffff !important;
+  --bg-glass: #ffffff !important;
+  --text-primary: #000000 !important;
+  --text-secondary: #18181b !important;
+  --text-muted: #27272a !important;
+  --border-color: #000000 !important;
+  --border-highlight: #000080 !important;
+  --border-focus: #000080 !important;
+  --primary: #000080 !important;
+  --secondary: #004d40 !important;
+}
+
+body.theme-high-contrast-light .site-header,
+body.theme-high-contrast-light .site-footer {
+  background: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+body.theme-high-contrast-light .glass-card,
+body.theme-high-contrast-light .step-card,
+body.theme-high-contrast-light .stat-card {
+  border: 2px solid #000000 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+body.theme-high-contrast-light a,
+body.theme-high-contrast-light .nav-link {
+  color: #000080 !important;
+  text-decoration: underline !important;
+}
+
+/* 3. Yellow on Black Mode */
+body.theme-yellow-on-black {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #050505 !important;
+  --bg-tertiary: #101010 !important;
+  --bg-surface: #000000 !important;
+  --text-primary: #ffff00 !important;
+  --text-secondary: #ffff55 !important;
+  --text-muted: #ffffaa !important;
+  --border-color: #ffff00 !important;
+  --border-highlight: #ffff00 !important;
+  --border-focus: #ffffff !important;
+  --primary: #ffff00 !important;
+}
+
+body.theme-yellow-on-black .glass-card,
+body.theme-yellow-on-black .btn {
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  background: #000000 !important;
+}
+
+/* ==========================================================================
+   Dyslexia-Friendly Mode & Font Scaling
+   ========================================================================== */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/opendyslexic/0.91.0/OpenDyslexic-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body.font-dyslexic,
+body.font-dyslexic * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.08em !important;
+  word-spacing: 0.12em !important;
+  line-height: 1.8 !important;
+}
+
+/* Text Scaling Multipliers */
+body.text-scale-100 {
+  --font-scale: 1;
+}
+
+body.text-scale-120 {
+  --font-scale: 1.2;
+}
+
+body.text-scale-140 {
+  --font-scale: 1.4;
+}
+
+/* Line Height Adjusters */
+body.line-height-relaxed {
+  --line-height-scale: 1.9;
+}
+
+/* Reduced Motion Mode */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Colorblind Filters */
+body.filter-protanopia {
+  filter: url('#protanopia-filter');
+}
+
+body.filter-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+body.filter-tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+body.filter-grayscale {
+  filter: grayscale(100%);
+}

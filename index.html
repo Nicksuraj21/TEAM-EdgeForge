@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary Meta Tags -->
+  <title>LifeLens VR | Virtual Disability Empathy Engine</title>
+  <meta name="title" content="LifeLens VR | Virtual Disability Empathy Engine" />
+  <meta name="description" content="Experience real-world environmental barriers from lived disability perspectives in interactive WebXR 3D simulations." />
+  <meta name="keywords" content="LifeLens VR, disability empathy simulator, wheelchair simulation, hospital disability empathy, floor crawl struggle, low vision VR, universal design, RPWD Act 2016" />
+  <meta name="author" content="LifeLens VR Open Innovation Community" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets (Neo-Bento Design System) -->
+  <link rel="stylesheet" href="css/neo-bento.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/accessibility.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Instant Synchronous Router & Smooth Section Scroller -->
+  <script>
+    window.showPage = function(pageId) {
+      var validViews = ['home', 'about'];
+      var target = validViews.indexOf(pageId) !== -1 ? pageId : 'home';
+
+      var views = document.querySelectorAll('.page-view');
+      for (var i = 0; i < views.length; i++) {
+        views[i].style.display = views[i].id === 'view-' + target ? 'block' : 'none';
+      }
+
+      var tabs = document.querySelectorAll('.neo-nav-tab');
+      for (var j = 0; j < tabs.length; j++) {
+        var action = tabs[j].getAttribute('data-tab-id') || '';
+        if (action === target) {
+          tabs[j].classList.add('active');
+        } else {
+          tabs[j].classList.remove('active');
+        }
+      }
+
+      try {
+        history.pushState(null, null, '#' + target);
+      } catch (e) {
+        window.location.hash = target;
+      }
+
+      window.scrollTo(0, 0);
+
+      if (window.lifeLensApp) {
+        window.lifeLensApp.currentView = target;
+        if (target === 'home') {
+          setTimeout(function() { window.lifeLensApp.initVREngine(); }, 60);
+        }
+      }
+    };
+
+    window.navScrollTo = function(sectionId, tabEl) {
+      window.showPage('home');
+      setTimeout(function() {
+        var el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 50);
+
+      if (tabEl) {
+        document.querySelectorAll('.neo-nav-tab').forEach(function(t) { t.classList.remove('active'); });
+        tabEl.classList.add('active');
+      }
+    };
+  </script>
+</head>
+<body class="neo-bento-body">
+  <!-- Skip to Main Content Link (WCAG AAA) -->
+  <a href="#main-content" class="skip-link">Skip to main accessible content</a>
+
+  <!-- ==========================================================================
+       Master Neo-Bento Curved Frame Container
+       ========================================================================== -->
+  <div class="neo-bento-master-wrapper">
+
+    <!-- ==========================================================================
+         1. Clean Streamlined Header
+         ========================================================================== -->
+    <header class="neo-bento-header" role="banner">
+      <!-- Brand Logo Top Left -->
+      <a href="#home" class="neo-brand-badge" aria-label="LifeLens VR Homepage" onclick="window.showPage('home'); return false;">
+        <div class="neo-brand-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+        </div>
+        <span>LifeLens VR</span>
+      </a>
+
+      <!-- Clean Fixed Navigation Island -->
+      <nav class="neo-nav-notch-container" id="main-nav-links" role="navigation" aria-label="Primary Navigation">
+        <a href="#home" class="neo-nav-tab active" data-tab-id="home" onclick="window.showPage('home'); return false;">Home</a>
+        <a href="#vr-simulator-section" class="neo-nav-tab" data-tab-id="vr" onclick="window.navScrollTo('vr-simulator-section', this); return false;">VR Simulator</a>
+        <a href="#about" class="neo-nav-tab" data-tab-id="about" onclick="window.showPage('about'); return false;">About</a>
+      </nav>
+
+      <!-- Right Accessibility Suite Button -->
+      <div class="neo-header-user-chip">
+        <button id="a11y-toggle-btn" class="neo-a11y-pill-btn" aria-label="Open Accessibility Toolbar">
+          <span>♿</span> A11y Suite
+        </button>
+      </div>
+    </header>
+
+    <!-- ==========================================================================
+         Main Application View Container
+         ========================================================================== -->
+    <main id="main-content" role="main">
+
+      <!-- ==========================================================================
+           VIEW 1: HOMEPAGE (Hero + Clean Direct VR Simulator Viewport)
+           ========================================================================== -->
+      <div id="view-home" class="page-view">
+        
+        <!-- Master Asymmetrical Hero Bento Grid -->
+        <div class="neo-hero-bento-grid">
+          
+          <!-- Left Large Mint-Pastel Bento Card -->
+          <div class="neo-mint-hero-card">
+            <div>
+              <h1 class="neo-hero-title-bold">
+                Experience Perspective.<br>
+                Build the<br>
+                Solution.
+              </h1>
+
+              <div class="neo-hero-cta-row">
+                <button type="button" class="neo-magenta-cta-btn" onclick="window.navScrollTo('vr-simulator-section');">
+                  <span>Enter VR Experience</span>
+                  <span>➔</span>
+                </button>
+
+                <div class="neo-hero-avatar-badge">
+                  <span style="font-size: 1.1rem; margin-right: 2px;">♿</span>
+                  <span style="font-size: 0.82rem; font-weight: 800; color: #090e1a;">PwD Lived Realities</span>
+                </div>
+              </div>
+
+              <p class="neo-hero-micro-desc">
+                Don't just see their struggle. Experience their perspective. LifeLens VR places you directly in the lived reality of wheelchair riders, hospital floor-crawling patients, and visually impaired students navigating the campus and trauma wards in real-time 3D WebXR and Meta Quest VR Box headsets.
+              </p>
+            </div>
+
+            <!-- Futuristic Bottom Stats Strip -->
+            <div class="neo-hero-stats-strip">
+              <div class="neo-stat-metric-block">
+                <span class="neo-stat-num">0.28m</span>
+                <span class="neo-stat-label">Floor Crawl<br>Eye-Level</span>
+              </div>
+              <div class="neo-stat-metric-block">
+                <span class="neo-stat-num">1:12</span>
+                <span class="neo-stat-label">Universal<br>Ramp Slope</span>
+              </div>
+              <div class="neo-stat-metric-block">
+                <span class="neo-stat-num">100%</span>
+                <span class="neo-stat-label">RPWD Act<br>Compliant</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Single Sleek Full-Height Visual Card -->
+          <div class="neo-single-visual-card" onclick="window.navScrollTo('vr-simulator-section');" style="cursor: pointer;">
+            <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=800&q=80" alt="Person wearing VR headset experiencing 3D empathy simulation" />
+            
+            <!-- Rotating Orbiting Badge -->
+            <div class="neo-orbit-badge" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="neo-orbit-badge-text">
+                <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+                <text font-size="8.5" font-weight="bold" fill="#090e1a" letter-spacing="2">
+                  • VIRTUAL DISABILITY LAB • EXPERIENCE REALITY •
+                </text>
+              </svg>
+              <span class="neo-orbit-arrow">➔</span>
+            </div>
+
+            <div class="neo-visual-overlay-pill">
+              <span>🥽 Meta Quest & VR Box Ready</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ======================================================================
+             DIRECT 3D VR DISABILITY EXPERIENCE (Hospital + Floor Crawl + Fullscreen)
+             ====================================================================== -->
+        <div id="vr-simulator-section" class="neo-content-bento-card" style="margin-top: 24px;">
+          
+          <!-- Top Row: Title & Action Controls -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <span class="section-badge green">Live 3D WebXR Simulator</span>
+              <h2 style="font-size: 2.1rem; color: #090e1a; margin-top: 4px; margin-bottom: 0;">Disability Navigation & Trauma Ward Simulator</h2>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <!-- Floor Crawl / Mobility Struggle Mode Toggle -->
+              <button id="btn-crawl-toggle" class="vr-crawl-toggle-btn" onclick="window.lifeLensApp.toggleFloorCrawl();" aria-label="Toggle Floor Crawling Struggle">
+                <span>🧗</span> Dismount & Floor Crawl Struggle
+              </button>
+
+              <!-- Fullscreen Button -->
+              <button id="btn-fullscreen-toggle" class="vr-fullscreen-btn" onclick="window.lifeLensApp.toggleFullscreen();" aria-label="Toggle Fullscreen">
+                <span>⛶</span> Fullscreen
+              </button>
+
+              <!-- VR Box & Meta Quest Headset Mode Button -->
+              <button id="btn-vr-box-toggle" class="vr-meta-quest-btn" onclick="window.lifeLensApp.toggleVRBoxMode();">
+                <span>🥽</span> VR Box / Meta Quest Mode
+              </button>
+
+              <!-- Auto-Drive Showcase Tour Button -->
+              <button id="btn-auto-tour" class="vr-auto-tour-btn" onclick="window.lifeLensApp.toggleAutoTour();">
+                <span>🚀</span> Auto-Drive Showcase Tour
+              </button>
+
+              <!-- Reality Switch Button -->
+              <button id="reality-switch-trigger" class="reality-switch-btn" aria-label="Toggle Universal Solution Model">
+                <span>⚠️</span> Barriered State (Click to Fix)
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls Bar: Environment Switcher, Empathy Perspectives & Camera Views -->
+          <div class="empathy-mode-selector-bar" style="margin-bottom: 16px;">
+            <!-- Environment Switcher -->
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <span style="font-size: 0.8rem; font-weight: 800; color: #475569; margin-right: 2px;">LOCATION:</span>
+              <button id="btn-env-campus" class="vr-env-btn active" onclick="window.lifeLensApp.switchEnvironment('campus')">
+                🏛️ Campus Plaza
+              </button>
+              <button id="btn-env-hospital" class="vr-env-btn" onclick="window.lifeLensApp.switchEnvironment('hospital')">
+                🏥 Hospital Trauma Ward
+              </button>
+            </div>
+
+            <!-- Perspectives -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="empathy-pill-btn active" onclick="window.lifeLensApp.setEmpathyMode('wheelchair', this)">
+                <span>♿</span> Mobility / Physical
+              </button>
+              <button class="empathy-pill-btn" onclick="window.lifeLensApp.setEmpathyMode('low_vision', this)">
+                <span>🦯</span> Low Vision & Sensory
+              </button>
+            </div>
+
+            <!-- Camera Angles -->
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span style="font-size: 0.8rem; font-weight: 800; color: #475569; margin-right: 4px;">CAMERA:</span>
+              <button class="cam-view-btn active" onclick="window.lifeLensApp.setCameraView('third_person', this)">
+                🎥 3rd-Person Follow
+              </button>
+              <button class="cam-view-btn" onclick="window.lifeLensApp.setCameraView('first_person', this)">
+                🥽 1st-Person Eye-Level
+              </button>
+              <button class="cam-view-btn" onclick="window.lifeLensApp.setCameraView('drone', this)">
+                🚁 Overview Drone
+              </button>
+            </div>
+          </div>
+
+          <!-- 3D Canvas Viewport (Clean, Uncluttered, Fullscreen Supported) -->
+          <div class="vr-viewer-wrapper" style="border-radius: 24px; position: relative; min-height: 580px; overflow: hidden; background: #0a0f1d;">
+            <div id="empathy-shader-overlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; transition: all 0.3s ease;"></div>
+
+            <!-- Floating Corner Fullscreen Toggle Button -->
+            <button class="vr-floating-fs-btn" onclick="window.lifeLensApp.toggleFullscreen();" title="Toggle Fullscreen (Key 'F')" aria-label="Toggle Fullscreen">
+              ⛶
+            </button>
+
+            <!-- VR Box Stereoscopic Center Divider -->
+            <div id="vr-stereo-divider" class="vr-stereoscopic-divider"></div>
+
+            <!-- 3D WebGL Canvas -->
+            <div id="vr-canvas-container" style="min-height: 580px; width: 100%;"></div>
+
+            <!-- Floating On-Screen Virtual D-Pad (Touch & Click Driving / Crawling) -->
+            <div class="vr-virtual-dpad-container">
+              <button class="vr-dpad-btn" 
+                      onmousedown="window.lifeLensApp.setVirtualKey('w', true)" 
+                      onmouseup="window.lifeLensApp.setVirtualKey('w', false)" 
+                      ontouchstart="window.lifeLensApp.setVirtualKey('w', true); event.preventDefault();" 
+                      ontouchend="window.lifeLensApp.setVirtualKey('w', false); event.preventDefault();"
+                      aria-label="Drive Forward">⬆️</button>
+              <div style="display: flex; gap: 6px;">
+                <button class="vr-dpad-btn" 
+                        onmousedown="window.lifeLensApp.setVirtualKey('a', true)" 
+                        onmouseup="window.lifeLensApp.setVirtualKey('a', false)" 
+                        ontouchstart="window.lifeLensApp.setVirtualKey('a', true); event.preventDefault();" 
+                        ontouchend="window.lifeLensApp.setVirtualKey('a', false); event.preventDefault();"
+                        aria-label="Turn Left">⬅️</button>
+                <button class="vr-dpad-btn" 
+                        onmousedown="window.lifeLensApp.setVirtualKey('s', true)" 
+                        onmouseup="window.lifeLensApp.setVirtualKey('s', false)" 
+                        ontouchstart="window.lifeLensApp.setVirtualKey('s', true); event.preventDefault();" 
+                        ontouchend="window.lifeLensApp.setVirtualKey('s', false); event.preventDefault();"
+                        aria-label="Reverse">⬇️</button>
+                <button class="vr-dpad-btn" 
+                        onmousedown="window.lifeLensApp.setVirtualKey('d', true)" 
+                        onmouseup="window.lifeLensApp.setVirtualKey('d', false)" 
+                        ontouchstart="window.lifeLensApp.setVirtualKey('d', true); event.preventDefault();" 
+                        ontouchend="window.lifeLensApp.setVirtualKey('d', false); event.preventDefault();"
+                        aria-label="Turn Right">➡️</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==========================================================================
+           VIEW 2: ABOUT
+           ========================================================================== -->
+      <div id="view-about" class="page-view" style="display: none;">
+        <div class="neo-content-bento-card">
+          <span class="section-badge">Platform Mission</span>
+          <h1 style="font-size: 2.2rem; color: #090e1a; margin: 10px 0 16px 0;">About LifeLens VR</h1>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: #1e293b; margin-bottom: 20px;">
+            Accessibility fails not due to lack of technology, but due to a profound lack of perspective. LifeLens VR is a dedicated virtual reality empathy engine that allows students, healthcare professionals, architects, engineers, and policymakers to experience the friction of physical barriers firsthand.
+          </p>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: #1e293b; margin-bottom: 24px;">
+            <strong>Ethical Positioning:</strong> We never claim a short virtual simulation replaces lived disability experience. Rather, it serves as a powerful catalyst for empathy-driven universal design and real-world architectural and healthcare retrofits.
+          </p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ==========================================================================
+         Footer
+         ========================================================================== -->
+    <footer style="margin-top: 36px; border-top: 1px solid rgba(9, 14, 26, 0.1); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 0.88rem; color: #334155;">
+      <div>
+        <strong style="color: #090e1a;">LifeLens VR</strong> • Dedicated Virtual Disability Empathy Engine
+      </div>
+      <div style="display: flex; gap: 16px;">
+        <a href="#home" style="color: #090e1a; font-weight: 700; text-decoration: none;" onclick="window.showPage('home'); return false;">Home</a>
+        <a href="#about" style="color: #090e1a; font-weight: 700; text-decoration: none;" onclick="window.showPage('about'); return false;">About</a>
+        <a href="#vr-simulator-section" style="color: #090e1a; font-weight: 700; text-decoration: none;" onclick="window.navScrollTo('vr-simulator-section'); return false;">VR Simulator</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Global Hotspot Modal -->
+  <div class="hotspot-modal-backdrop" id="vr-hotspot-backdrop" role="dialog" aria-modal="true">
+    <div class="hotspot-modal" id="vr-hotspot-modal" tabindex="-1"></div>
+  </div>
+
+  <!-- Global Accessibility Suite Drawer -->
+  <div class="a11y-drawer-backdrop" id="a11y-backdrop" aria-hidden="true"></div>
+  <aside class="a11y-drawer" id="a11y-drawer" role="dialog" aria-modal="true" aria-label="Accessibility Preferences Suite" aria-hidden="true">
+    <div class="a11y-drawer-header">
+      <div class="a11y-drawer-title">
+        <span>♿</span> A11y Suite (WCAG AAA)
+      </div>
+      <button id="a11y-close-btn" class="a11y-drawer-close" aria-label="Close accessibility options">✕</button>
+    </div>
+    <div class="a11y-drawer-body">
+      <div class="a11y-control-group">
+        <span class="a11y-control-label">Text Size Scaling</span>
+        <div class="a11y-btn-group">
+          <button class="a11y-btn active" data-a11y-font="100">Normal</button>
+          <button class="a11y-btn" data-a11y-font="120">Large (120%)</button>
+          <button class="a11y-btn" data-a11y-font="140">XL (140%)</button>
+        </div>
+      </div>
+      <div class="a11y-control-group">
+        <span class="a11y-control-label">High Contrast Themes</span>
+        <div class="a11y-btn-group">
+          <button class="a11y-btn active" data-a11y-contrast="default">Default</button>
+          <button class="a11y-btn" data-a11y-contrast="high-dark">High Dark</button>
+          <button class="a11y-btn" data-a11y-contrast="high-light">High Light</button>
+        </div>
+      </div>
+      <div class="a11y-toggle-row">
+        <div class="a11y-toggle-info">
+          <span class="a11y-toggle-title">Dyslexia-Friendly Font</span>
+          <span class="a11y-toggle-desc">OpenDyslexic typography</span>
+        </div>
+        <label class="switch-input">
+          <input type="checkbox" id="a11y-dyslexic-toggle" />
+          <span class="slider-round"></span>
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- External CDN Libraries (Three.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Universal Standalone Application Engine -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>
