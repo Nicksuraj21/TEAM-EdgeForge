@@ -367,6 +367,13 @@ class LifeLensVRApp {
     // Audio Synthesizer
     this.audioSynth = new WebAudioSynthesizer();
 
+    // Mouse & Touch Orbit / Free-Look Controls (Drag to Look 360° Up/Down/Left/Right)
+    this.orbitYaw = 0;
+    this.orbitPitch = 0.22;
+    this.orbitDistance = 3.8;
+    this.isPointerDragging = false;
+    this.pointerStart = { x: 0, y: 0 };
+
     // Locomotion & Physics
     this.keys = { w: false, a: false, s: false, d: false };
     this.riderPos = { x: 0, y: 0, z: 6.5 };
@@ -735,7 +742,50 @@ class LifeLensVRApp {
       this.vrRenderer.xr.enabled = true;
     }
 
-    container.appendChild(this.vrRenderer.domElement);
+    const canvas = this.vrRenderer.domElement;
+    canvas.style.cursor = 'grab';
+    canvas.style.touchAction = 'none';
+
+    // Mouse & Touch Drag to Rotate / Look Around (Pitch & Yaw)
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button, .vr-compact-in-canvas-bar')) return;
+      this.isPointerDragging = true;
+      this.pointerStart = { x: e.clientX, y: e.clientY };
+      canvas.style.cursor = 'grabbing';
+      try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+      this.audioSynth.initContext();
+      this.stopAutoTour();
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (!this.isPointerDragging) return;
+      const dx = e.clientX - this.pointerStart.x;
+      const dy = e.clientY - this.pointerStart.y;
+
+      // Rotate left / right (Yaw)
+      this.orbitYaw -= dx * 0.007;
+      // Look up / down (Pitch - clamped to avoid flipping)
+      this.orbitPitch = Math.max(-0.65, Math.min(1.15, this.orbitPitch + dy * 0.007));
+
+      this.pointerStart = { x: e.clientX, y: e.clientY };
+    });
+
+    const stopPointerDrag = (e) => {
+      this.isPointerDragging = false;
+      canvas.style.cursor = 'grab';
+      try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+    };
+
+    canvas.addEventListener('pointerup', stopPointerDrag);
+    canvas.addEventListener('pointercancel', stopPointerDrag);
+
+    // Mouse Wheel Zoom In / Out
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      this.orbitDistance = Math.max(1.4, Math.min(9.5, this.orbitDistance + e.deltaY * 0.004));
+    }, { passive: false });
+
+    container.appendChild(canvas);
 
     // Lighting
     if (this.currentEnvironment === 'hospital') {
@@ -971,33 +1021,40 @@ class LifeLensVRApp {
         });
       }
 
-      // Update Camera Position & Orientation
+      // Update Camera Position & Orientation (Interactive Mouse Drag & Orbit)
       const eyeHeight = this.isFloorCrawling ? 0.28 : 1.05;
-      const camHeight = this.isFloorCrawling ? 1.0 : 2.0;
-      const camDist = this.isFloorCrawling ? 2.2 : 3.8;
+      const curDist = this.isFloorCrawling ? this.orbitDistance * 0.65 : this.orbitDistance;
 
       if (this.cameraViewMode === 'third_person') {
-        const targetCamX = this.riderPos.x + Math.sin(this.riderYaw) * camDist;
-        const targetCamZ = this.riderPos.z + Math.cos(this.riderYaw) * camDist;
-        const targetCamY = this.riderPos.y + camHeight;
+        const totalYaw = this.riderYaw + this.orbitYaw;
+        const targetCamX = this.riderPos.x + Math.sin(totalYaw) * Math.cos(this.orbitPitch) * curDist;
+        const targetCamZ = this.riderPos.z + Math.cos(totalYaw) * Math.cos(this.orbitPitch) * curDist;
+        const targetCamY = this.riderPos.y + (this.isFloorCrawling ? 0.25 : 0.85) + Math.sin(this.orbitPitch) * curDist + (this.isFloorCrawling ? 0.35 : 0.6);
 
-        this.vrCamera.position.lerp(new THREE.Vector3(targetCamX, targetCamY, targetCamZ), 0.12);
-        this.vrCamera.lookAt(this.riderPos.x, this.riderPos.y + (this.isFloorCrawling ? 0.2 : 0.85), this.riderPos.z);
+        this.vrCamera.position.lerp(new THREE.Vector3(targetCamX, Math.max(0.12, targetCamY), targetCamZ), 0.15);
+        this.vrCamera.lookAt(this.riderPos.x, this.riderPos.y + (this.isFloorCrawling ? 0.25 : 0.85), this.riderPos.z);
 
       } else if (this.cameraViewMode === 'first_person') {
         this.vrCamera.position.set(this.riderPos.x, this.riderPos.y + eyeHeight, this.riderPos.z);
 
         if (this.isVRBoxStereoMode && (this.gyroYaw !== 0 || this.gyroPitch !== 0)) {
-          this.vrCamera.rotation.set(this.gyroPitch, this.riderYaw + this.gyroYaw, 0, 'YXZ');
+          this.vrCamera.rotation.set(this.gyroPitch + this.orbitPitch, this.riderYaw + this.gyroYaw + this.orbitYaw, 0, 'YXZ');
         } else {
-          const lookTargetX = this.riderPos.x - Math.sin(this.riderYaw) * 10;
-          const lookTargetZ = this.riderPos.z - Math.cos(this.riderYaw) * 10;
-          this.vrCamera.lookAt(lookTargetX, this.riderPos.y + eyeHeight, lookTargetZ);
+          const totalYaw = this.riderYaw + this.orbitYaw;
+          const lookTargetX = this.riderPos.x - Math.sin(totalYaw) * Math.cos(this.orbitPitch) * 10;
+          const lookTargetZ = this.riderPos.z - Math.cos(totalYaw) * Math.cos(this.orbitPitch) * 10;
+          const lookTargetY = this.riderPos.y + eyeHeight - Math.sin(this.orbitPitch) * 10;
+          this.vrCamera.lookAt(lookTargetX, lookTargetY, lookTargetZ);
         }
 
       } else if (this.cameraViewMode === 'drone') {
-        this.vrCamera.position.lerp(new THREE.Vector3(0, 14, 14), 0.08);
-        this.vrCamera.lookAt(0, 1.5, -2);
+        const droneDist = 14 * (this.orbitDistance / 3.8);
+        const droneX = Math.sin(this.orbitYaw) * Math.cos(this.orbitPitch) * droneDist;
+        const droneZ = Math.cos(this.orbitYaw) * Math.cos(this.orbitPitch) * droneDist;
+        const droneY = Math.max(3.5, 14 + Math.sin(this.orbitPitch) * 8);
+
+        this.vrCamera.position.lerp(new THREE.Vector3(droneX, droneY, droneZ), 0.1);
+        this.vrCamera.lookAt(0, 1.2, -2);
       }
 
       // Stereoscopic VR Box or Standard Mono Viewport Rendering
