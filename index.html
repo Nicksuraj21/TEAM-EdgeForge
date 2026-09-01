@@ -208,71 +208,66 @@
             </div>
           </div>
 
-          <!-- ==================================================================
-               SLEEK COMPACT TOP MENU BUTTON BAR (Organized Small Pill Buttons)
-               ================================================================== -->
-          <div class="vr-compact-menu-toolbar" role="toolbar" aria-label="3D Simulator Controls">
-            
-            <!-- Location Group -->
-            <div class="vr-menu-group">
-              <span class="vr-menu-label">LOCATION:</span>
-              <button id="btn-env-campus" class="compact-pill-btn env-btn active" onclick="window.lifeLensApp.switchEnvironment('campus')" title="Switch to Campus Plaza">
-                <span>🏛️</span> Campus
-              </button>
-              <button id="btn-env-hospital" class="compact-pill-btn env-btn" onclick="window.lifeLensApp.switchEnvironment('hospital')" title="Switch to Hospital Trauma Ward">
-                <span>🏥</span> Hospital
-              </button>
-            </div>
-
-            <div style="width: 1px; height: 20px; background: #e2e8f0; margin: 0 4px;"></div>
-
-            <!-- Struggle & Barrier Mode Group -->
-            <div class="vr-menu-group">
-              <span class="vr-menu-label">STRUGGLE:</span>
-              <button id="btn-crawl-toggle" class="compact-pill-btn crawl-btn" onclick="window.lifeLensApp.toggleFloorCrawl()" title="Toggle Floor Crawling Struggle (Key 'C')">
-                <span>🧗</span> Floor Crawl
-              </button>
-              <button id="reality-switch-trigger" class="compact-pill-btn fix-btn" onclick="window.lifeLensApp.toggleRealityMode()" title="Toggle Universal Architectural Retrofit">
-                <span>⚠️</span> Barrier Fix
-              </button>
-            </div>
-
-            <div style="width: 1px; height: 20px; background: #e2e8f0; margin: 0 4px;"></div>
-
-            <!-- Camera Angles Group -->
-            <div class="vr-menu-group">
-              <span class="vr-menu-label">CAMERA:</span>
-              <button id="btn-cam-3rd" class="compact-pill-btn active" onclick="window.lifeLensApp.setCameraView('third_person', this)" title="3rd-Person Follow Camera">
-                <span>🎥</span> 3rd-Person
-              </button>
-              <button id="btn-cam-1st" class="compact-pill-btn" onclick="window.lifeLensApp.setCameraView('first_person', this)" title="1st-Person Eye-Level Camera">
-                <span>🥽</span> 1st-Person
-              </button>
-              <button id="btn-cam-drone" class="compact-pill-btn" onclick="window.lifeLensApp.setCameraView('drone', this)" title="Overview Drone Camera">
-                <span>🚁</span> Drone
-              </button>
-            </div>
-
-            <div style="width: 1px; height: 20px; background: #e2e8f0; margin: 0 4px;"></div>
-
-            <!-- Controls Group -->
-            <div class="vr-menu-group">
-              <span class="vr-menu-label">CONTROLS:</span>
-              <button id="btn-auto-tour" class="compact-pill-btn" onclick="window.lifeLensApp.toggleAutoTour()" title="Auto-Drive Demonstration Tour">
-                <span>🚀</span> Auto Tour
-              </button>
-              <button id="btn-vr-box-toggle" class="compact-pill-btn" onclick="window.lifeLensApp.toggleVRBoxMode()" title="Dual-Lens VR Box & Meta Quest Headset Mode">
-                <span>🥽</span> VR Box
-              </button>
-              <button id="btn-fullscreen-toggle" class="compact-pill-btn" onclick="window.lifeLensApp.toggleFullscreen()" title="Toggle Fullscreen (Key 'F')">
-                <span>⛶</span> Fullscreen
-              </button>
-            </div>
-
-          </div>
-
-          <!-- 3D Canvas Viewport (Clean & Immersive) -->
+          <!-- 3D Canvas Viewport (With Floating In-VR Compact Menu Bar) -->
           <div class="vr-viewer-wrapper" style="border-radius: 24px; position: relative; min-height: 600px; overflow: hidden; background: #0a0f1d;">
+            
+            <div id="empathy-shader-overlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; transition: all 0.3s ease;"></div>
+
+            <!-- ==================================================================
+                 COMPACT FLOATING IN-VR TOP MENU BAR (Inside 3D VR Screen)
+                 ================================================================== -->
+            <div class="vr-compact-in-canvas-bar" role="toolbar" aria-label="In-VR Feature Controls">
+              
+              <!-- Location Group -->
+              <div class="vr-menu-group">
+                <button id="btn-env-campus" class="compact-pill-btn env-btn active" onclick="window.lifeLensApp.switchEnvironment('campus')" title="Switch to Campus Plaza">
+                  <span>🏛️</span> Campus
+                </button>
+                <button id="btn-env-hospital" class="compact-pill-btn env-btn" onclick="window.lifeLensApp.switchEnvironment('hospital')" title="Switch to Hospital Trauma Ward">
+                  <span>🏥</span> Hospital
+                </button>
+              </div>
+
+              <div class="vr-menu-divider"></div>
+
+              <!-- Struggle & Barrier Mode Group -->
+              <div class="vr-menu-group">
+                <button id="btn-crawl-toggle" class="compact-pill-btn crawl-btn" onclick="window.lifeLensApp.toggleFloorCrawl()" title="Toggle Floor Crawling Struggle (Key 'C')">
+                  <span>🧗</span> Floor Crawl
+                </button>
+                <button id="reality-switch-trigger" class="compact-pill-btn fix-btn" onclick="window.lifeLensApp.toggleRealityMode()" title="Toggle Universal Architectural Retrofit">
+                  <span>⚠️</span> Barrier Fix
+                </button>
+              </div>
+
+              <div class="vr-menu-divider"></div>
+
+              <!-- Camera Angles Group -->
+              <div class="vr-menu-group">
+                <button id="btn-cam-3rd" class="compact-pill-btn active" onclick="window.lifeLensApp.setCameraView('third_person', this)" title="3rd-Person Follow Camera">
+                  <span>🎥</span> 3rd
+                </button>
+                <button id="btn-cam-1st" class="compact-pill-btn" onclick="window.lifeLensApp.setCameraView('first_person', this)" title="1st-Person Eye-Level Camera">
+                  <span>🥽</span> 1st
+                </button>
+                <button id="btn-cam-drone" class="compact-pill-btn" onclick="window.lifeLensApp.setCameraView('drone', this)" title="Overview Drone Camera">
+                  <span>🚁</span> Drone
+                </button>
+              </div>
+
+              <div class="vr-menu-divider"></div>
+
+              <!-- Controls Group -->
+              <div class="vr-menu-group">
+                <button id="btn-auto-tour" class="compact-pill-btn" onclick="window.lifeLensApp.toggleAutoTour()" title="Auto-Drive Demonstration Tour">
+                  <span>🚀</span> Auto Tour
+                </button>
+                <button id="btn-vr-box-toggle" class="compact-pill-btn" onclick="window.lifeLensApp.toggleVRBoxMode()" title="Dual-Lens VR Box & Meta Quest Headset Mode">
+                  <span>🥽</span> VR Box
+                </button>
+              </div>
+
+            </div>
             
             <div id="empathy-shader-overlay" style="position: absolute; inset: 0; pointer-events: none; z-index: 5; transition: all 0.3s ease;"></div>
 
